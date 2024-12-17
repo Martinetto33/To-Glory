@@ -1,3 +1,8 @@
+/**:
+ * @author Alin Bordeianu
+ * @plugindesc Plugin used to extract statuses from actors
+ */
+
 /**
  * This function is here to help with the effect of the bezoar,
  * which removes a random status from one of the players.
@@ -15,14 +20,31 @@
  * $gameParty (contains all the actors in the party)
  * $dataStates (contains all the states existing in the database)
  */
-function selectRandomStatusIDFromPartyMember(partyMember) {
-    let partyMemberStates = partyMember._states
-        .filter(state => state) // checks if state is not null
-    // Selecting a random status
-    if (partyMemberStates.length > 0) {
-        let index = getRandomInt(partyMemberStates.length)
-        return partyMemberStates[index].id
-    } else {
-        return null
+(function() { // this is a IIFE (Immediately Invoked Function Expression): https://developer.mozilla.org/en-US/docs/Glossary/IIFE
+    function getRandomInt(max) {
+        return Math.floor(Math.random() * max);
     }
-}
+
+    function selectRandomStatusIDFromPartyMember() {
+        const partyMember = BattleManager._subject;
+        if (!partyMember || !partyMember.isActor()) {
+            console.log("No valid actor is currently performing an action.");
+            return;
+        }
+
+        console.log(`Actor using the item: ${partyMember.name()}`);
+        const partyMemberStates = partyMember._states.filter(Boolean); // Filter out null/undefined
+
+        if (partyMemberStates.length > 0) {
+            const randomStateId = partyMemberStates[getRandomInt(partyMemberStates.length)];
+            partyMember.removeState(randomStateId); // Remove the state by ID
+            console.log(`Removed state ID: ${randomStateId}`);
+        } else {
+            console.log(`No states found for actor ${partyMember.name()}`);
+        }
+    }
+
+    // Expose function to global scope
+    window.selectRandomStatusIDFromPartyMember = selectRandomStatusIDFromPartyMember;
+})();
+
