@@ -26,8 +26,8 @@ function inflictBleeding(entitiesArray) {
                 entity.performCollapse() // Triggers collapse animation
                 if (entity.isEnemy()) {
                     $gameTroop.removeBattleMember(entity)
-                } else {
-                    $gameParty.die(entity) // TODO: understand how to make an ally fall
+                } else if (entity.isActor()) {
+                    BattleManager.removeActor(entity.actorId()) // TODO: understand how to make an ally fall
                 }
             }
         }
