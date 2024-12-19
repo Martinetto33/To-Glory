@@ -46,12 +46,12 @@ function selectRandomStatusIDFromPartyMember() {
     }
 }
 
-function filterAllNegativeStates(array, actorName) {
+function filterAllNegativeStates(array, entityName) {
     partyMemberNegativeStates = []
     for (i = 0; i < array.length; i++) {
         if (isNegativeState(array[i].id)) {
-            console.log(`Actor ${actorName} is affected by negative status ${array[i].id}!`)
-            partyMemberNegativeStates.push(allPartyMemberStates[i])
+            console.log(`Actor ${entityName} is affected by negative status ${array[i].id}!`)
+            partyMemberNegativeStates.push(array[i])
         }
     }
     return partyMemberNegativeStates
@@ -59,4 +59,4 @@ function filterAllNegativeStates(array, actorName) {
 
 function isNegativeState(stateId) {
     return negativeStatuses.includes(stateId)
-} 
+}
