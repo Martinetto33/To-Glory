@@ -23,12 +23,7 @@ function inflictBleeding(entitiesArray) {
 
             // Checking for death and handling it
             if (entity.isDead()) {
-                entity.performCollapse() // Triggers collapse animation
-                if (entity.isEnemy()) {
-                    $gameTroop.removeBattleMember(entity)
-                } else if (entity.isActor()) {
-                    BattleManager.removeActor(entity.actorId()) // TODO: understand how to make an ally fall
-                }
+                entity.performCollapse() // this is the proper way to kill an entity
             }
         }
     })
