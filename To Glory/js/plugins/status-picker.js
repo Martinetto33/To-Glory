@@ -1,13 +1,17 @@
-/**:
+/*:
  * @author Alin Bordeianu
  * @plugindesc Plugin used to extract statuses from actors
  */
 
-// Array of negative statuses
-var negativeStatuses = [
-    3, // poison (id taken from database)
-    6, // bleeding
-]
+// JSON object containing states ids
+var negativeStatusesJSON = {
+    "poisoned": 3, 
+    "bleeding": 6, 
+    "restricted": 7, 
+}
+
+var negativeStatuses = [3, 6, 7]
+    
 
 /**
  * This function is here to help with the effect of the bezoar,

@@ -1,4 +1,4 @@
-/**:
+/*:
  * @plugindesc Plugin that implements some unconventional skills for actors.
  * @author Alin Bordeianu
  * @version 1.0
@@ -45,4 +45,40 @@ function inflictBleeding(entitiesArray) {
         inflictBleeding($gameParty.members())
         inflictBleeding($gameTroop.members())
     }
+
+    // adding damage forwarding for grappling effect
+    const _Game_Battler_gainHP = Game_Battler.prototype.gainHp
+    Game_Battler.prototype.gainHp = function(value) {
+        _Game_Battler_gainHP.call(this, value)
+        console.log("Called Game_Action.executeDamage()")
+        forwardDamageIfGrappled(this, value)
+        avalancheEffect(this, value)
+    }
 })()
+
+
+// TODO: what happens if mimmo dies after grappling?
+/**
+ * This effect deals damage to Mimmo each time the grappled enemy takes damage.
+ */
+function forwardDamageIfGrappled(target, damage) {
+    console.log("in forward damage")
+    if (target.isStateAffected(negativeStatusesJSON["restricted"])) {
+        /* Mimmo is grappling the enemy, so he should take damage. */
+        const mimmo = $gameParty.members()[1]
+        mimmo.gainHp(-(Math.abs(damage)))
+        mimmo.startDamagePopup()
+        console.log(`Inflicted ${-damage} to Mimmo!`)
+    }
+}
+
+function avalancheEffect(target, damage) {
+    console.log("In avalancheEffect()")
+    if (target.isStateAffected(9)) { // 9 is the state "Mimmo's Avalanche"
+        $gameTroop.members().forEach(enemy => {
+            enemy.gainHp(-Math.abs(damage))
+            enemy.startDamagePopup()
+            console.log(`Enemy took ${-damage}`)
+        })
+    }
+}
