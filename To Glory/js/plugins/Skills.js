@@ -7,6 +7,8 @@
  * Prova
  */
 
+var didAvalancheTakePlace = false
+
 /**
  * This function inflicts damage to all entities affected by bleeding.
  */
@@ -44,6 +46,7 @@ function inflictBleeding(entitiesArray) {
         console.log("Strange game battler code called")
         inflictBleeding($gameParty.members())
         inflictBleeding($gameTroop.members())
+        didAvalancheTakePlace = false
     }
 
     // adding damage forwarding for grappling effect
@@ -52,12 +55,15 @@ function inflictBleeding(entitiesArray) {
         _Game_Battler_gainHP.call(this, value)
         console.log("Called Game_Action.executeDamage()")
         forwardDamageIfGrappled(this, value)
-        avalancheEffect(this, value)
+        if (!didAvalancheTakePlace) {
+            avalancheEffect(this, value)
+        }
     }
 })()
 
 
 // TODO: what happens if mimmo dies after grappling?
+// TODO: if grapple misses, mimmo is still blocked in grappling position
 /**
  * This effect deals damage to Mimmo each time the grappled enemy takes damage.
  */
@@ -74,9 +80,10 @@ function forwardDamageIfGrappled(target, damage) {
 
 function avalancheEffect(target, damage) {
     console.log("In avalancheEffect()")
-    if (target.isStateAffected(9)) { // 9 is the state "Mimmo's Avalanche"
+    if (target.isStateAffected(9) && !didAvalancheTakePlace) { // 9 is the state "Mimmo's Avalanche"
+        didAvalancheTakePlace = true // this is called before gainHp() to avoid recursive loops (gainHp calls avalancheEffect which calls gainHp and so on)
         $gameTroop.members().forEach(enemy => {
-            enemy.gainHp(-Math.abs(damage))
+            enemy.gainHp(-Math.abs(damage)) // this leads to a recursive call of gainHP... watch out
             enemy.startDamagePopup()
             console.log(`Enemy took ${-damage}`)
         })
