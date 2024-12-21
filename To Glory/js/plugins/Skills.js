@@ -67,7 +67,7 @@ function inflictBleeding(entitiesArray) {
     Game_Action.prototype.apply = function(target) {
         _Game_Action_apply.call(this, target)
 
-        if(this.item().id === CATCH_SKILL_ID) {
+        if (this.item().id === CATCH_SKILL_ID) {
             const result = target.result()
             if (result.isHit()) {
                 // Action was successfull
@@ -75,6 +75,7 @@ function inflictBleeding(entitiesArray) {
                 this.subject().addState(RESTRICTING_STATE_ID)
             }
         }
+        checkEvasion(target)
     }
     // ALIN: Leaving it here for future reference
     /* 
@@ -98,8 +99,6 @@ function inflictBleeding(entitiesArray) {
     }*/
 })()
 
-
-// TODO: if grapple misses, mimmo is still blocked in grappling position
 /**
  * This effect deals damage to Mimmo each time the grappled enemy takes damage.
  */
@@ -132,6 +131,19 @@ function avalancheEffect(target, damage) {
     }
 }
 
+function checkEvasion(target) {
+    const result = target._result // Get the result of the last action
+    if (result.hit) {
+        if (result.evaded) {
+            console.log(`${target.name()} evaded the attack!`)
+        } else {
+            console.log(`${target.name()} was hit!`)
+        }
+    } else if (result.missed) {
+        console.log(`${target.name()} completely missed the attack!`)
+    }
+}
+
 function resetGameBattlerFlags() {
     $gameTroop.members().forEach(member => {
         member.hasMyAvalancheTakenEffect = false
@@ -140,6 +152,8 @@ function resetGameBattlerFlags() {
         member.hasMyAvalancheTakenEffect = false
     })
 }
+
+
 
 // A utility function.
 // Use it to see all the properties of JSON objects in the console.
