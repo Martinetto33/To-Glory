@@ -75,6 +75,12 @@ function inflictBleeding(entitiesArray) {
                 this.subject().addState(RESTRICTING_STATE_ID)
             }
         }
+        // If this is Alissa's Negate spell
+        if (this.item().id === NEGATE_SKILL_ID) {
+            const skillIds = getSkillIdsListFromTarget(target)
+            const skillsReadableList = associateSkillIdsToNames(skillIds, target.name())
+            console.log(JSON.stringify(skillsReadableList))
+        }
         if (checkEvasion(target, this.subject())) {
             counterAttackDodgeEffect(target, this.subject())
         }
@@ -179,7 +185,50 @@ function resetGameBattlerFlags() {
     })
 }
 
+/**
+ * Returns a list of skills from the enemy target.
+ * @param {Game_Battler} target the enemy to show the skills of
+ * @returns an array of the skillIds to be put in the selection menu
+ */
+function getSkillIdsListFromTarget(target) {
+    printObject(target)
+    console.log(`Enemy id is ${target.enemyId()}`)
+    const enemyId = target.enemyId()
+    let actions = $dataEnemies
+            .filter(enemy => enemy !== null)
+            .filter(enemy => enemy.id === enemyId)
+            .map(enemy => enemy.actions)
+    /* actions is an array of arrays, and I can't use flatMap */
+    actions = flatMap(actions)
+    console.log(JSON.stringify(actions))
+    return actions.map(action => action.skillId)
+}
 
+// custom flatMap, since this version of js doesn't have one
+function flatMap(arrayOfArrays) {
+    let flatArray = []
+    for (const elem of arrayOfArrays) {
+        for (const innerElem of elem) {
+            flatArray.push(innerElem)
+        }
+    }
+    return flatArray
+}
+
+/**
+ * Associates each id to a name for the skill and a description.
+ * @param {Array<Number>} idsArray the array of skill ids
+ * @param {String} targetName the name of the skill owner
+ * @returns an array of JSON objects with the fields id, name, description and ownerName
+ */
+function associateSkillIdsToNames(idsArray, targetName) {
+    return idsArray.map(id => ({
+        "id": id,
+        "name": $dataSkills[id].name,
+        "description": $dataSkills[id].description,
+        "ownerName": targetName
+    }))
+}
 
 // A utility function.
 // Use it to see all the properties of JSON objects in the console.

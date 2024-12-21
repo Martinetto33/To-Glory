@@ -95,3 +95,5 @@ function showCustomPopup(battler, text, color = "#FFFFFF", duration = 90) {
         }
     }, 1000 / 60) // 60 FPS
 }
+
+

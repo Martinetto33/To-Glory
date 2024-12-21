@@ -25,6 +25,7 @@ const C_EVASION_LV3 = 18
 // Skills
 const CATCH_SKILL_ID = 10
 const EVASION_SKILL_ID = 24
+const NEGATE_SKILL_ID = 23
 
 // Switches
 const GRAPPLE_FAILED_SWITCH_INDEX = 6
