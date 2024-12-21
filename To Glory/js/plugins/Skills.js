@@ -7,8 +7,6 @@
  * Prova
  */
 
-var didAvalancheTakePlace = false
-
 /**
  * This function inflicts damage to all entities affected by bleeding.
  */
@@ -40,52 +38,115 @@ function inflictBleeding(entitiesArray) {
  * To do something only once per turn, use BattleManager.
  */
 (() => {
+    // This field is here to avoid infinite recursion when activating the avalanche
+    // effect on a grappled enemy.
+    Game_Battler.prototype.hasMyAvalancheTakenEffect = false
+
     const _BattleManager_endTurn = BattleManager.endTurn
     BattleManager.endTurn = function() { // overriding endTurn
         _BattleManager_endTurn.call(this) // this call allows to keep old logic, and then apply the bleeding logic at the end
-        console.log("Strange game battler code called")
+        //console.log("Strange game battler code called")
         inflictBleeding($gameParty.members())
         inflictBleeding($gameTroop.members())
-        didAvalancheTakePlace = false
+        resetGameBattlerFlags()
     }
 
     // adding damage forwarding for grappling effect
     const _Game_Battler_gainHP = Game_Battler.prototype.gainHp
     Game_Battler.prototype.gainHp = function(value) {
         _Game_Battler_gainHP.call(this, value)
-        console.log("Called Game_Action.executeDamage()")
-        forwardDamageIfGrappled(this, value)
-        if (!didAvalancheTakePlace) {
+        if (value < 0) {
+            // damage was taken, so proceed with forwarding
+            forwardDamageIfGrappled(this, value)
+            // when entities with avalanche effect take damage, activate it
             avalancheEffect(this, value)
+        }        
+    }
+
+    const _Game_Action_apply = Game_Action.prototype.apply
+    Game_Action.prototype.apply = function(target) {
+        _Game_Action_apply.call(this, target)
+
+        if(this.item().id === CATCH_SKILL_ID) {
+            const result = target.result()
+            if (result.isHit()) {
+                // Action was successfull
+                console.log("Catch succeeded!")
+                this.subject().addState(RESTRICTING_STATE_ID)
+            }
         }
     }
+    // ALIN: Leaving it here for future reference
+    /* 
+    const _Game_Action_applyItemEffect = Game_Action.prototype.applyItemEffect
+    Game_Action.prototype.applyItemEffect = function(target, effect) {
+        console.log("QUACK")
+        _Game_Action_applyItemEffect.call(this, target, effect)
+        if (this.item().id == CATCH_SKILL_ID) {
+            console.log("papere")
+            const result = target.result()
+            if(!result.isHit()) {
+                console.log("Catch failed!")
+                // Remove restricting state after effects are applied
+                const performer = this.subject()
+                if (performer.isStateAffected(RESTRICTING_STATE_ID)) {
+                    performer.removeState(RESTRICTING_STATE_ID)
+                    console.log(`Restricting state removed from ${performer.name()}`)
+                }
+            }
+        }
+    }*/
 })()
 
 
-// TODO: what happens if mimmo dies after grappling?
 // TODO: if grapple misses, mimmo is still blocked in grappling position
 /**
  * This effect deals damage to Mimmo each time the grappled enemy takes damage.
  */
 function forwardDamageIfGrappled(target, damage) {
-    console.log("in forward damage")
-    if (target.isStateAffected(negativeStatusesJSON["restricted"])) {
+    //console.log("in forward damage")
+    //console.log(`This target is ${target.name()} and hasAlreadyForwardedDamage = ${target.hasAlreadyForwardedDamage}`)
+    if (target.isStateAffected(negativeStatusesJSON["restricted"]) && !target.hasAlreadyForwardedDamage) {
         /* Mimmo is grappling the enemy, so he should take damage. */
-        const mimmo = $gameParty.members()[1]
+        const mimmo = $gameParty.members()[MIMMO_INDEX]
         mimmo.gainHp(-(Math.abs(damage)))
-        mimmo.startDamagePopup()
+        // mimmo.startDamagePopup()
+        showCustomPopup(mimmo, `Catch: ${Math.abs(damage)} DMG`, "#939e9e", POPUP_STANDARD_DURATION)
         console.log(`Inflicted ${-damage} to Mimmo!`)
     }
 }
 
 function avalancheEffect(target, damage) {
-    console.log("In avalancheEffect()")
-    if (target.isStateAffected(9) && !didAvalancheTakePlace) { // 9 is the state "Mimmo's Avalanche"
-        didAvalancheTakePlace = true // this is called before gainHp() to avoid recursive loops (gainHp calls avalancheEffect which calls gainHp and so on)
+    //console.log("In avalancheEffect()")
+    //console.log(`This target is ${target.name()} and hasMyAvalancheTakenEffect = ${target.hasMyAvalancheTakenEffect}`)
+    if (target.isStateAffected(MIMMO_AVALANCHE_STATE_ID) && !target.hasMyAvalancheTakenEffect) { // 9 is the state "Mimmo's Avalanche"
+        target.hasMyAvalancheTakenEffect = true // this is called before gainHp() to avoid recursive loops (gainHp calls avalancheEffect which calls gainHp and so on)
         $gameTroop.members().forEach(enemy => {
             enemy.gainHp(-Math.abs(damage)) // this leads to a recursive call of gainHP... watch out
-            enemy.startDamagePopup()
-            console.log(`Enemy took ${-damage}`)
+            // enemy.startDamagePopup()
+            showCustomPopup(enemy, `Avalanche: ${Math.abs(damage)} DMG`, "#8cfdff", POPUP_STANDARD_DURATION)
+            console.log(`Enemy took ${-damage} from avalanche`)
         })
+        console.log(`${target.name()}'s avalanche took effect!`)
+        target.removeState(MIMMO_AVALANCHE_STATE_ID)
+    }
+}
+
+function resetGameBattlerFlags() {
+    $gameTroop.members().forEach(member => {
+        member.hasMyAvalancheTakenEffect = false
+    })
+    $gameParty.members().forEach(member => {
+        member.hasMyAvalancheTakenEffect = false
+    })
+}
+
+// A utility function.
+// Use it to see all the properties of JSON objects in the console.
+function printObject(obj) {
+    for (var key in obj) {
+        if (obj.hasOwnProperty(key)) {
+            console.log(key + " -> " + obj[key]);
+        }
     }
 }
