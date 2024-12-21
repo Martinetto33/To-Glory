@@ -75,7 +75,9 @@ function inflictBleeding(entitiesArray) {
                 this.subject().addState(RESTRICTING_STATE_ID)
             }
         }
-        checkEvasion(target)
+        if (checkEvasion(target, this.subject())) {
+            counterAttackDodgeEffect(target, this.subject())
+        }
     }
     // ALIN: Leaving it here for future reference
     /* 
@@ -132,16 +134,40 @@ function avalancheEffect(target, damage) {
 }
 
 function checkEvasion(target) {
-    const result = target._result // Get the result of the last action
-    if (result.hit) {
-        if (result.evaded) {
-            console.log(`${target.name()} evaded the attack!`)
-        } else {
-            console.log(`${target.name()} was hit!`)
-        }
-    } else if (result.missed) {
-        console.log(`${target.name()} completely missed the attack!`)
+    const result = target.result() // Get the result of the last action
+    //console.log("Obtained result: " + JSON.stringify(result))
+    if (result.evaded) {
+        console.log(`${target.name()} evaded the attack!`)
+        return true
     }
+    if (result.missed) {
+        // console.log(`${target.name()} was completely missed by the attack!`)
+        return false
+    }
+    if (result.isHit()) {
+        // console.log(`${target.name()} was hit!`)
+        return false
+    }
+    return false
+}
+
+function counterAttackDodgeEffect(target, subject) {
+    if (target.isActor() && target.actorId() === IVAN_ID && isTargetReadyForCounterAttackDodge(target)) {
+        const dmg = target.atk * 2
+        subject.gainHp(-dmg)
+        //subject.startDamagePopup()
+        showCustomPopup(subject, `Counter-attack! ${dmg} DMG`, "#e6842e", 180)
+        console.log("Counter attack evasion succeeded! Inflicted " + dmg.toString() + " dmg!")
+        // Now calling the common event that resets all the stuff
+        $gameTemp.reserveCommonEvent(IVAN_ON_EVASION_SUCCEEDED)
+        console.log("Reserved event!")
+    }
+}
+
+function isTargetReadyForCounterAttackDodge(target) {
+    return target.isStateAffected(C_EVASION_LV1) ||
+           target.isStateAffected(C_EVASION_LV2) ||
+           target.isStateAffected(C_EVASION_LV3)  
 }
 
 function resetGameBattlerFlags() {
@@ -163,4 +189,7 @@ function printObject(obj) {
             console.log(key + " -> " + obj[key]);
         }
     }
+    console.log("---- NOW STRINGIFYING ----")
+    console.log(JSON.stringify(obj))
+    console.log("--------------------------")
 }
