@@ -42,6 +42,7 @@ function inflictBleeding(entitiesArray) {
     // This field is here to avoid infinite recursion when activating the avalanche
     // effect on a grappled enemy.
     Game_Battler.prototype.hasMyAvalancheTakenEffect = false
+    let negateEffectInProgress = false
 
     const _BattleManager_endTurn = BattleManager.endTurn
     BattleManager.endTurn = function() { // overriding endTurn
@@ -50,6 +51,16 @@ function inflictBleeding(entitiesArray) {
         inflictBleeding($gameParty.members())
         inflictBleeding($gameTroop.members())
         resetGameBattlerFlags()
+        negateEffectInProgress = false
+    }
+
+    const _BattleManager_update = BattleManager.prototype.update
+    BattleManager.prototype.update = function() {
+        if (negateEffectInProgress) {
+            return
+        } else {
+            _BattleManager_update.call(this)
+        }
     }
 
     // adding damage forwarding for grappling effect
@@ -78,10 +89,12 @@ function inflictBleeding(entitiesArray) {
         }
         // If this is Alissa's Negate spell
         if (this.item().id === NEGATE_SKILL_ID) {
+            negateEffectInProgress = true
             const skillIds = getSkillIdsListFromTarget(target)
             // the index() method returns the target's index in the array of current enemies
             const skillsReadableList = associateSkillIdsToNames(skillIds, target.name(), target.index()) 
             console.log(JSON.stringify(skillsReadableList))
+            showCustomWindows()
         }
         if (checkEvasion(target, this.subject())) {
             counterAttackDodgeEffect(target, this.subject())

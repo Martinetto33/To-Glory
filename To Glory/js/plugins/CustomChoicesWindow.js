@@ -10,81 +10,64 @@
 // Custom scene; note: all this weird syntax is an older JavaScript way to create classes.
 // The 'class' keyword was added in later versions, and RPG Maker seems not to support it.
 /**********************************************************/
-//    SCENE CONTAINING CHOICES LIST AND DESCRIPTIONS
+//    ADDING CUSTOM WINDOWS TO ORIGINAL SCENE_BATTLE
 /**********************************************************/
-function Scene_ChoiceWithDescription() {
-    this.initialize.apply(this, arguments)
+
+Scene_Battle.prototype.createCustomChoiceWindows = function(choices, descriptions) {
+    // Create the choices window
+    const choicesRect = this.customChoicesWindowRect()
+    this._customChoicesWindow = new Window_CustomChoiceList(
+        choicesRect, 
+        this.updateCustomDescription.bind(this)
+    )
+    this.addWindow(this._customChoicesWindow)
+    // Make the window interactable
+    this._choicesWindowActive = true
+    this._customChoicesWindow.activate()
+    this._customChoicesWindow.select(0)
+
+    // Set choices and descriptions
+    this._customChoicesWindow.setChoices(choices, descriptions)
+
+    // Create the description window
+    const descriptionRect = this.customDescriptionWindowRect()
+    this._customDescriptionWindow = new Window_Description(descriptionRect)
+    this.addWindow(this._customDescriptionWindow)
 }
 
-Scene_ChoiceWithDescription.prototype = Object.create(Scene_MenuBase.prototype)
-Scene_ChoiceWithDescription.prototype.constructor = Scene_ChoiceWithDescription
-
-/**
- * Storing choices and descriptions into static fields of the class
- * {@link Scene_ChoiceWithDescription}.
- * @param {Array<string>} choices 
- * @param {Array<string>} descriptions 
- */
-Scene_ChoiceWithDescription.prepare = function(choices, descriptions) {
-    this._choices = choices || []
-    this._descriptions = descriptions || []
-}
-
-Scene_ChoiceWithDescription.prototype.initialize = function(choices, descriptions) {
-    Scene_MenuBase.prototype.initialize.call(this) // initialises parent object
-    this._choices = Scene_ChoiceWithDescription._choices
-    this._descriptions = Scene_ChoiceWithDescription._descriptions
-}
-
- Scene_ChoiceWithDescription.prototype.create = function() {
-    Scene_MenuBase.prototype.create.call(this)
-    this.createChoicesWindow()
-    this.createDescriptionWindow()
-    this._choicesWindow.setChoices(this._choices, this._descriptions)
-}
-
-// Creation of the choices window
-Scene_ChoiceWithDescription.prototype.createChoicesWindow = function() {
-    const rect = this.choicesWindowRect()
-    
-    // Bind function is used to tell the Window_ChoiceList to always refer
-    // to the updateDescription() function defined within this class instance.
-    // This way, the function can't be called on any other objects.
-    
-    this._choicesWindow = new Window_ChoiceList(rect, this.updateDescription.bind(this))
-    this.addWindow(this._choicesWindow)
-}
-
-// Creation of the description window
-Scene_ChoiceWithDescription.prototype.createDescriptionWindow = function() {
-    const rect = this.descriptionWindowRect()
-    this._descriptionWindow = new Window_Description(rect)
-    this.addWindow(this._descriptionWindow)
-}
-
-Scene_ChoiceWithDescription.prototype.choicesWindowRect = function() {
+Scene_Battle.prototype.customChoicesWindowRect = function() {
     const ww = 300 // Width of the choices window
-    const wh = Graphics.boxHeight
-    const wx = 0
-    const wy = 0
+    const wh = Graphics.boxHeight // Full height of the screen
+    const wx = 0 // Start from the left edge
+    const wy = 0 // Start from the top
     return new Rectangle(wx, wy, ww, wh)
 }
 
-Scene_ChoiceWithDescription.prototype.descriptionWindowRect = function() {
-    const ww = Graphics.boxWidth - 300
-    const wh = Graphics.boxHeight
-    const wx = 300
-    const wy = 0
+Scene_Battle.prototype.customDescriptionWindowRect = function() {
+    const ww = Graphics.boxWidth - 300 // Remaining width after the choices window
+    const wh = Graphics.boxHeight // Full height of the screen
+    const wx = 300 // Start where the choices window ends
+    const wy = 0 // Start from the top
     return new Rectangle(wx, wy, ww, wh)
 }
 
-Scene_ChoiceWithDescription.prototype.updateDescription = function(description) {
-    this._descriptionWindow.setText(description)
+Scene_Battle.prototype.updateCustomDescription = function(description) {
+    this._customDescriptionWindow.setText(description)
 }
 
-Scene_ChoiceWithDescription.prototype.setChoices = function(choices, descriptions) {
-    this._choicesWindow.setChoices(choices, descriptions)
-} 
+Scene_Battle.prototype.removeCustomChoiceWindows = function() {
+    if (this._customChoicesWindow) {
+        this.removeChild(this._customChoicesWindow)
+        this._customChoicesWindow = null
+        this._choicesWindowActive = false
+    }
+    if (this._customDescriptionWindow) {
+        this.removeChild(this._customDescriptionWindow)
+        this._customDescriptionWindow = null
+    }
+}
+
+
 
 
 /**********************************************************/
@@ -99,10 +82,14 @@ Window_CustomChoiceList.prototype = Object.create(Window_Selectable.prototype)
 Window_CustomChoiceList.prototype.constructor = Window_CustomChoiceList
 
 Window_CustomChoiceList.prototype.initialize = function(rect, onUpdateDescription) {
-    Window_Selectable.prototype.initialize.call(this, rect)
+    Window_Selectable.prototype.initialize.call(this, rect.x, rect.y, rect.width, rect.height)
     this._choices = []
     this._descriptions = []
     this._onUpdateDescription = onUpdateDescription
+
+    // Bind the maxItems method to this instance
+    this.maxItems = () => this._choices.length
+
     this.refresh()
 }
 
@@ -121,9 +108,10 @@ Window_CustomChoiceList.prototype.setChoices = function(choices, descriptions) {
     this.select(0)
 }
 
-Window_CustomChoiceList.prototype.maxItems = function() {
+// Called by the inner logic of the engine (rpg_windows.js:779)
+/* Window_CustomChoiceList.prototype.maxItems = function() {
     return this._choices.length
-}
+} */
 
 Window_CustomChoiceList.prototype.drawItem = function(index) {
     const rect = this.itemRect(index)
@@ -155,8 +143,7 @@ Window_Description.prototype = Object.create(Window_Base.prototype)
 Window_Description.prototype.constructor = Window_Description
 
 Window_Description.prototype.initialize = function(rect) {
-    console.log(`Rect: ${rect}`)
-    Window_Base.prototype.initialize.call(this)
+    Window_Base.prototype.initialize.call(this, rect.x, rect.y, rect.width, rect.height)
     this._text = ''
 }
 
@@ -176,36 +163,32 @@ Window_Description.prototype.refresh = function() {
 //                          USAGE
 /**********************************************************/
 
-
-const choices = ['Fire', 'Ice', 'Thunder', 'Heal']
-const descriptions = [
-    'A fiery attack that burns enemies.',
-    'A chilling blast that freezes foes.',
-    'A shocking strike with lightning.',
-    'A skill to heal allies.'
-]
-
-/* const scene = new Scene_ChoiceWithDescription(choices, descriptions)
-printObject(scene)
-scene.create = function() {
-    Scene_MenuBase.prototype.create.call(this)
-    this.createChoicesWindow()
-    this.createDescriptionWindow()
-
-    //Set choices and descriptions
-    this._choicesWindow.setChoices(choices, descriptions)
-}
-SceneManager.push(scene) */
-
 // Without the new keyword, JavaScript doesn't treat windowChoiceList
 // as an object that needs full initialisation and context...
 // const windowChoiceList = new Window_CustomChoiceList()
 
-function createScene() {
-    // Preparing scene with required data
-    Scene_ChoiceWithDescription.prepare(choices, descriptions)
-    // push() takes a CLASS as a parameter, not an instance.
-    // class instances have to be initialised through start()
-    // and/or create() overridden methods of Scene_Base
-    SceneManager.push(Scene_ChoiceWithDescription)
+// Overriding the normal update method of Scene_Battle.
+// This should avoid progression of the battle while the user is busy choosing an option.
+const _Scene_Battle_update = Scene_Battle.prototype.update
+Scene_Battle.prototype.update = function() {
+    if (this._choicesWindowActive) printObject(this._choicesWindow)
+    if (this._choicesWindowActive && this._choicesWindow !== undefined) {
+        // Then only update the choices window
+        console.log("HELLO")
+        this._choicesWindow.update()
+    } else {
+        _Scene_Battle_update.call(this)
+    }
+}
+
+
+function showCustomWindows() {
+    const choices = ['Fire', 'Ice', 'Thunder', 'Heal']
+    const descriptions = [
+        'A fiery attack that burns enemies.',
+        'A chilling blast that freezes foes.',
+        'A shocking strike with lightning.',
+        'A skill to heal allies.'
+    ]
+    SceneManager._scene.createCustomChoiceWindows(choices, descriptions)
 }
