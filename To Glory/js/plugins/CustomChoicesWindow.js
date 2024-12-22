@@ -19,16 +19,28 @@ function Scene_ChoiceWithDescription() {
 Scene_ChoiceWithDescription.prototype = Object.create(Scene_MenuBase.prototype)
 Scene_ChoiceWithDescription.prototype.constructor = Scene_ChoiceWithDescription
 
-Scene_ChoiceWithDescription.prototype.initialize = function(choices, descriptions) {
-    Scene_MenuBase.prototype.initialize.call(this) // initialises parent object
+/**
+ * Storing choices and descriptions into static fields of the class
+ * {@link Scene_ChoiceWithDescription}.
+ * @param {Array<string>} choices 
+ * @param {Array<string>} descriptions 
+ */
+Scene_ChoiceWithDescription.prepare = function(choices, descriptions) {
     this._choices = choices || []
     this._descriptions = descriptions || []
+}
+
+Scene_ChoiceWithDescription.prototype.initialize = function(choices, descriptions) {
+    Scene_MenuBase.prototype.initialize.call(this) // initialises parent object
+    this._choices = Scene_ChoiceWithDescription._choices
+    this._descriptions = Scene_ChoiceWithDescription._descriptions
 }
 
  Scene_ChoiceWithDescription.prototype.create = function() {
     Scene_MenuBase.prototype.create.call(this)
     this.createChoicesWindow()
     this.createDescriptionWindow()
+    this._choicesWindow.setChoices(this._choices, this._descriptions)
 }
 
 // Creation of the choices window
@@ -79,27 +91,27 @@ Scene_ChoiceWithDescription.prototype.setChoices = function(choices, description
 //              WINDOW CONTAINING CHOICES LIST
 /**********************************************************/
 
-/* function Window_ChoiceList() {
+function Window_CustomChoiceList() {
     this.initialize.apply(this, arguments)
 }
 
-Window_ChoiceList.prototype = Object.create(Window_Selectable.prototype)
-Window_ChoiceList.prototype.constructor = Window_ChoiceList
+Window_CustomChoiceList.prototype = Object.create(Window_Selectable.prototype)
+Window_CustomChoiceList.prototype.constructor = Window_CustomChoiceList
 
-Window_ChoiceList.prototype.initialize = function(rect, onUpdateDescription) {
-    Window_Selectable.prototype.initialize.call(this)
+Window_CustomChoiceList.prototype.initialize = function(rect, onUpdateDescription) {
+    Window_Selectable.prototype.initialize.call(this, rect)
     this._choices = []
     this._descriptions = []
     this._onUpdateDescription = onUpdateDescription
     this.refresh()
-} */
+}
 
 /**
  * 
  * @param {Array<String>} choices 
  * @param {Array<String>} descriptions 
  */
-/* Window_ChoiceList.prototype.setChoices = function(choices, descriptions) {
+Window_CustomChoiceList.prototype.setChoices = function(choices, descriptions) {
     assert(Array.isArray(choices) && Array.isArray(descriptions) && 
     choices.length > 0 && descriptions.length > 0 && 
     choices.length === descriptions.length, "Choices and descriptions arrays are ill-formed.")
@@ -109,33 +121,33 @@ Window_ChoiceList.prototype.initialize = function(rect, onUpdateDescription) {
     this.select(0)
 }
 
-Window_ChoiceList.prototype.maxItems = function() {
+Window_CustomChoiceList.prototype.maxItems = function() {
     return this._choices.length
 }
 
-Window_ChoiceList.prototype.drawItem = function(index) {
+Window_CustomChoiceList.prototype.drawItem = function(index) {
     const rect = this.itemRect(index)
     this.drawText(this._choices[index], rect.x, rect.y, rect.width, 'left')
-} */
+}
 
 /**
  * This is an overridden function, called by the RPG Maker engine on
  * all active windows each frame.
  */
-/* Window_ChoiceList.prototype.update = function() {
+Window_CustomChoiceList.prototype.update = function() {
     Window_Selectable.prototype.update.call(this)
     if (this._onUpdateDescription && this.index() >= 0) {
         const description = this._descriptions[this.index()]
         this._onUpdateDescription(description)
     }
-} */
+}
 
 
 /**********************************************************/
 //              WINDOW CONTAINING DESCRIPTION
 /**********************************************************/
 
-/* function Window_Description() {
+function Window_Description() {
     this.initialize.apply(this, arguments)
 }
 
@@ -146,19 +158,19 @@ Window_Description.prototype.initialize = function(rect) {
     console.log(`Rect: ${rect}`)
     Window_Base.prototype.initialize.call(this)
     this._text = ''
-} */
+}
 
-/* Window_Description.prototype.setText = function(text) {
+Window_Description.prototype.setText = function(text) {
     if (this._text !== text) {
         this._text = text
         this.refresh()
     }
-} */
+}
 
-/* Window_Description.prototype.refresh = function() {
+Window_Description.prototype.refresh = function() {
     this.contents.clear()
     this.drawTextEx(this._text, 0, 0)
-} */
+}
 
 /**********************************************************/
 //                          USAGE
@@ -187,11 +199,13 @@ SceneManager.push(scene) */
 
 // Without the new keyword, JavaScript doesn't treat windowChoiceList
 // as an object that needs full initialisation and context...
-// const windowChoiceList = new Window_ChoiceList()
+// const windowChoiceList = new Window_CustomChoiceList()
 
 function createScene() {
-    const myScene = new Scene_ChoiceWithDescription()
-    myScene.create()
-    console.log(myScene)
-    SceneManager.push(myScene)
+    // Preparing scene with required data
+    Scene_ChoiceWithDescription.prepare(choices, descriptions)
+    // push() takes a CLASS as a parameter, not an instance.
+    // class instances have to be initialised through start()
+    // and/or create() overridden methods of Scene_Base
+    SceneManager.push(Scene_ChoiceWithDescription)
 }
