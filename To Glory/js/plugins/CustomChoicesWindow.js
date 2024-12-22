@@ -26,7 +26,7 @@ Scene_ChoiceWithDescription.prototype.initialize = function(choices, description
 }
 
  Scene_ChoiceWithDescription.prototype.create = function() {
-    Scene_MenuBase.prototype.create.call(this) // creates parent object; this in the brackets means the parent of this object
+    Scene_MenuBase.prototype.create.call(this)
     this.createChoicesWindow()
     this.createDescriptionWindow()
 }
@@ -189,5 +189,9 @@ SceneManager.push(scene) */
 // as an object that needs full initialisation and context...
 // const windowChoiceList = new Window_ChoiceList()
 
-const myScene = new Scene_ChoiceWithDescription()
-console.log(myScene)
+function createScene() {
+    const myScene = new Scene_ChoiceWithDescription()
+    myScene.create()
+    console.log(myScene)
+    SceneManager.push(myScene)
+}

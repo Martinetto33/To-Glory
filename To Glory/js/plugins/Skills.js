@@ -79,7 +79,8 @@ function inflictBleeding(entitiesArray) {
         // If this is Alissa's Negate spell
         if (this.item().id === NEGATE_SKILL_ID) {
             const skillIds = getSkillIdsListFromTarget(target)
-            const skillsReadableList = associateSkillIdsToNames(skillIds, target.name())
+            // the index() method returns the target's index in the array of current enemies
+            const skillsReadableList = associateSkillIdsToNames(skillIds, target.name(), target.index()) 
             console.log(JSON.stringify(skillsReadableList))
         }
         if (checkEvasion(target, this.subject())) {
@@ -192,7 +193,7 @@ function resetGameBattlerFlags() {
  * @returns an array of the skillIds to be put in the selection menu
  */
 function getSkillIdsListFromTarget(target) {
-    printObject(target)
+    // printObject(target)
     console.log(`Enemy id is ${target.enemyId()}`)
     const enemyId = target.enemyId()
     let actions = $dataEnemies
@@ -220,13 +221,15 @@ function flatMap(arrayOfArrays) {
  * Associates each id to a name for the skill and a description.
  * @param {Array<Number>} idsArray the array of skill ids
  * @param {String} targetName the name of the skill owner
+ * @param {Number} targetIndex the index in the enemies array of the skill owner
  * @returns an array of JSON objects with the fields id, name, description and ownerName
  */
-function associateSkillIdsToNames(idsArray, targetName) {
+function associateSkillIdsToNames(idsArray, targetName, targetIndex) {
     return idsArray.map(id => ({
         "id": id,
         "name": $dataSkills[id].name,
         "description": $dataSkills[id].description,
-        "ownerName": targetName
+        "ownerName": targetName,
+        "ownerIndex": targetIndex
     }))
 }
