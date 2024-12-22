@@ -97,8 +97,8 @@ function inflictBleeding(entitiesArray) {
             showCustomWindows()
             // Apparently the following two lines make the 
             // engine block awaiting for input
-            this.subject().setActionState('inputting')
-            BattleManager.startInput()
+            // this.subject().setActionState('inputting')
+            // BattleManager.startInput()
         }
         if (checkEvasion(target, this.subject())) {
             counterAttackDodgeEffect(target, this.subject())

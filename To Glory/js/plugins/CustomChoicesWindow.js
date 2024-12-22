@@ -71,8 +71,8 @@
     Scene_Battle.prototype.removeClassicWindows = function() {
         // Deactivate other windows
         
-        // Contains life and states
-        this._statusWindow.close()
+        // Contains life and states; cannot be closed
+        this._statusWindow.hide()
         
         // Contains the fight and escape options
         this._partyCommandWindow.close()
@@ -180,10 +180,15 @@
     // Overriding the normal update method of Scene_Battle.
     // This should avoid progression of the battle while the user is busy choosing an option.
     const _Scene_Battle_update = Scene_Battle.prototype.update
+    let wereClassicWindowsRemoved = false
     Scene_Battle.prototype.update = function() {
         if (this._choicesWindowActive === true && this._customChoicesWindow !== undefined) {
             // Then only update the choices window
             console.log("HELLO")
+            if (!wereClassicWindowsRemoved) {
+                this.removeClassicWindows()
+                wereClassicWindowsRemoved = true
+            }
             this._customChoicesWindow.update()
         } else {
             _Scene_Battle_update.call(this)
@@ -208,5 +213,4 @@ function showCustomWindows() {
         'A skill to heal allies.'
     ]
     SceneManager._scene.createCustomChoiceWindows(choices, descriptions)
-    SceneManager._scene.removeClassicWindows()
 }
