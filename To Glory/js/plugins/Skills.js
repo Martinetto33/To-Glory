@@ -95,6 +95,10 @@ function inflictBleeding(entitiesArray) {
             const skillsReadableList = associateSkillIdsToNames(skillIds, target.name(), target.index()) 
             console.log(JSON.stringify(skillsReadableList))
             showCustomWindows()
+            // Apparently the following two lines make the 
+            // engine block awaiting for input
+            this.subject().setActionState('inputting')
+            BattleManager.startInput()
         }
         if (checkEvasion(target, this.subject())) {
             counterAttackDodgeEffect(target, this.subject())
