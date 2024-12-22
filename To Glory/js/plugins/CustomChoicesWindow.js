@@ -25,7 +25,7 @@ Scene_ChoiceWithDescription.prototype.initialize = function(choices, description
     this._descriptions = descriptions || []
 }
 
-/* Scene_ChoiceWithDescription.prototype.create = function() {
+ Scene_ChoiceWithDescription.prototype.create = function() {
     Scene_MenuBase.prototype.create.call(this) // creates parent object; this in the brackets means the parent of this object
     this.createChoicesWindow()
     this.createDescriptionWindow()
@@ -72,7 +72,7 @@ Scene_ChoiceWithDescription.prototype.updateDescription = function(description) 
 
 Scene_ChoiceWithDescription.prototype.setChoices = function(choices, descriptions) {
     this._choicesWindow.setChoices(choices, descriptions)
-} */
+} 
 
 
 /**********************************************************/
@@ -190,3 +190,4 @@ SceneManager.push(scene) */
 // const windowChoiceList = new Window_ChoiceList()
 
 const myScene = new Scene_ChoiceWithDescription()
+console.log(myScene)
