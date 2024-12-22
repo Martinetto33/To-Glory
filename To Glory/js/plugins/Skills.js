@@ -4,7 +4,8 @@
  * @version 1.0
  * 
  * @help
- * Prova
+ * Contains all special party member skills.
+ * Requires plugin Utils to work.
  */
 
 /**
@@ -228,17 +229,4 @@ function associateSkillIdsToNames(idsArray, targetName) {
         "description": $dataSkills[id].description,
         "ownerName": targetName
     }))
-}
-
-// A utility function.
-// Use it to see all the properties of JSON objects in the console.
-function printObject(obj) {
-    for (var key in obj) {
-        if (obj.hasOwnProperty(key)) {
-            console.log(key + " -> " + obj[key]);
-        }
-    }
-    console.log("---- NOW STRINGIFYING ----")
-    console.log(JSON.stringify(obj))
-    console.log("--------------------------")
 }
