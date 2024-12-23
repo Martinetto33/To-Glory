@@ -13,7 +13,7 @@
     /**********************************************************/
     //    ADDING CUSTOM WINDOWS TO ORIGINAL SCENE_BATTLE
     /**********************************************************/    
-    Scene_Battle.prototype.createCustomChoiceWindows = function(choices, descriptions) {
+    Scene_Battle.prototype.createCustomChoiceWindows = function(choices, descriptions, data, onSelectionCallback) {
         // Create the choices window
         const choicesRect = this.customChoicesWindowRect()
         this._customChoicesWindow = new Window_CustomChoiceList(
@@ -28,7 +28,7 @@
         this._customChoicesWindow.select(0)
     
         // Set choices and descriptions
-        this._customChoicesWindow.setChoices(choices, descriptions)
+        this._customChoicesWindow.setChoices(choices, descriptions, data)
     
         // Create the description window
         const descriptionRect = this.customDescriptionWindowRect()
@@ -36,9 +36,11 @@
         this.addWindow(this._customDescriptionWindow)
 
         // Callback
-
-        const onSelect = (index, choice) => {
-            console.log(`Selected option: ${choice} (Index: ${index})`)
+        const onSelect = (index, selectedData) => {
+            console.log(`Selected option: ${selectedData} (Index: ${index})`)
+            // onSelectionCallback is the lockEnemySkill function in Skills.js
+            // id is the id of the skill to be locked
+            onSelectionCallback(selectedData.ownerIndex, selectedData.id)
             this._choicesWindowActive = false
             this._customChoicesWindow.close()
             this._customDescriptionWindow.close()
@@ -111,6 +113,7 @@
         // Window_Selectable.prototype.initialize.call(this, rect.x, rect.y, rect.width, rect.height)
         Window_Selectable.prototype.initialize.call(this, 0, 0, 300, 500)
 
+        this._data = [] // data contains the whole JSON objects
         this._choices = []
         this._descriptions = []
         this._onUpdateDescription = onUpdateDescription
@@ -126,12 +129,13 @@
      * @param {Array<String>} choices 
      * @param {Array<String>} descriptions 
      */
-    Window_CustomChoiceList.prototype.setChoices = function(choices, descriptions) {
+    Window_CustomChoiceList.prototype.setChoices = function(choices, descriptions, data) {
         assert(Array.isArray(choices) && Array.isArray(descriptions) && 
         choices.length > 0 && descriptions.length > 0 && 
         choices.length === descriptions.length, "Choices and descriptions arrays are ill-formed.")
         this._choices = choices
         this._descriptions = descriptions
+        this._data = data
         this.refresh()
         this.select(0)
     }
@@ -166,7 +170,7 @@
     Window_CustomChoiceList.prototype.processOk = function() {
         if (this._okCallback) {
             const selectedIndex = this.index()
-            this._okCallback(selectedIndex, this._choices[selectedIndex])
+            this._okCallback(selectedIndex, this._data[selectedIndex])
         }
         this.deactivate()
     }
@@ -246,13 +250,10 @@ function Window_Description() {
     this.initialize.apply(this, arguments)
 }
 
-function showCustomWindows() {
-    const choices = ['Fire', 'Ice', 'Thunder', 'Heal']
-    const descriptions = [
-        'A fiery attack that burns enemies.',
-        'A chilling blast that freezes foes.',
-        'A shocking strike with lightning.',
-        'A skill to heal allies.'
-    ]
-    SceneManager._scene.createCustomChoiceWindows(choices, descriptions)
+function showCustomWindows(data, onSelectionCallback) {
+    const choices = data.map(elem => elem.name) // array of names
+    const descriptions = data.map(elem => elem.ownerName + "\n" + elem.description)
+    console.log("Choices = ", JSON.stringify(choices))
+    console.log("Descriptions = ", JSON.stringify(descriptions))
+    SceneManager._scene.createCustomChoiceWindows(choices, descriptions, data, onSelectionCallback)
 }

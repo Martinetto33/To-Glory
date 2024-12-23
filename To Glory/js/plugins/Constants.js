@@ -21,6 +21,7 @@ const RESTRICTING_STATE_ID = 8
 const C_EVASION_LV1 = 10 // counter-attack evasion lv1
 const C_EVASION_LV2 = 17
 const C_EVASION_LV3 = 18
+const CUSTOM_SKILL_SEALED = 21
 
 // Skills
 const CATCH_SKILL_ID = 10
