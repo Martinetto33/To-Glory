@@ -109,9 +109,7 @@
     Window_CustomChoiceList.prototype.constructor = Window_CustomChoiceList
     
     Window_CustomChoiceList.prototype.initialize = function(rect, onUpdateDescription) {
-        // TODO: uncomment when normal windows are disabled
-        // Window_Selectable.prototype.initialize.call(this, rect.x, rect.y, rect.width, rect.height)
-        Window_Selectable.prototype.initialize.call(this, 0, 0, 300, 500)
+        Window_Selectable.prototype.initialize.call(this, rect.x, rect.y, rect.width, rect.height)
 
         this._data = [] // data contains the whole JSON objects
         this._choices = []
@@ -196,9 +194,7 @@
     Window_Description.prototype.constructor = Window_Description
     
     Window_Description.prototype.initialize = function(rect) {
-        // TODO: uncomment when default windows are disabled
-        // Window_Base.prototype.initialize.call(this, rect.x, rect.y, rect.width, rect.height)
-        Window_Base.prototype.initialize.call(this, rect.x, rect.y, rect.width, 500)
+        Window_Base.prototype.initialize.call(this, rect.x, rect.y, rect.width, rect.height)
         this._text = ''
     }
     
@@ -252,7 +248,15 @@ function Window_Description() {
 
 function showCustomWindows(data, onSelectionCallback) {
     const choices = data.map(elem => elem.name) // array of names
-    const descriptions = data.map(elem => elem.ownerName + "\n" + elem.description)
+    const descriptions = data.map(elem => {
+        let description = elem.ownerName + "\n"
+        if (elem.description === "") {
+            description += "[No description]"
+        } else {
+            description += elem.description
+        }
+        return description
+    })
     console.log("Choices = ", JSON.stringify(choices))
     console.log("Descriptions = ", JSON.stringify(descriptions))
     SceneManager._scene.createCustomChoiceWindows(choices, descriptions, data, onSelectionCallback)
