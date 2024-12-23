@@ -34,6 +34,18 @@
         const descriptionRect = this.customDescriptionWindowRect()
         this._customDescriptionWindow = new Window_Description(descriptionRect)
         this.addWindow(this._customDescriptionWindow)
+
+        // Callback
+
+        const onSelect = (index, choice) => {
+            console.log(`Selected option: ${choice} (Index: ${index})`)
+            this._choicesWindowActive = false
+            this._customChoicesWindow.close()
+            this._customDescriptionWindow.close()
+            this.restoreClassicWindows()
+        }
+
+        this._customChoicesWindow.setHandler(onSelect)
     }
     
     Scene_Battle.prototype.customChoicesWindowRect = function() {
@@ -83,6 +95,9 @@
         console.log("I called remove")
     }
 
+    Scene_Battle.prototype.restoreClassicWindows = function() {
+        this._statusWindow.show()
+    }
 
     /**********************************************************/
     //              WINDOW CONTAINING CHOICES LIST
@@ -137,9 +152,35 @@
      */
     Window_CustomChoiceList.prototype.update = function() {
         Window_Selectable.prototype.update.call(this)
+        this.processHandling()
         if (this._onUpdateDescription && this.index() >= 0) {
             const description = this._descriptions[this.index()]
             this._onUpdateDescription(description)
+        }
+    }
+
+    Window_CustomChoiceList.prototype.setHandler = function(okCallback) {
+        this._okCallback = okCallback
+    }
+
+    Window_CustomChoiceList.prototype.processOk = function() {
+        if (this._okCallback) {
+            const selectedIndex = this.index()
+            this._okCallback(selectedIndex, this._choices[selectedIndex])
+        }
+        this.deactivate()
+    }
+
+    Window_CustomChoiceList.prototype.isOkEnabled = function() {
+        return true
+    }
+
+    Window_CustomChoiceList.prototype.processHandling = function() {
+        if (this.isOpenAndActive()) {
+            if (this.isOkEnabled() && Input.isTriggered('ok')) {
+                console.log("Ok triggered: ", Input.isTriggered('ok'))
+                this.processOk()
+            }
         }
     }
 
@@ -192,6 +233,7 @@
             this._customChoicesWindow.update()
         } else {
             _Scene_Battle_update.call(this)
+            wereClassicWindowsRemoved = false
         }
     }
 })()
