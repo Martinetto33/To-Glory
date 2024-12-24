@@ -207,6 +207,9 @@
     
     Window_Description.prototype.refresh = function() {
         this.contents.clear()
+        // Setting up text wrapping
+        console.log("Content width: " + this.contentsWidth() + "; width of a = " + this.textWidth("a"))
+        this._text = lineWrap(this._text, this.contentsWidth(), this.textWidth("a"))
         this.drawTextEx(this._text, 0, 0)
     }
 
