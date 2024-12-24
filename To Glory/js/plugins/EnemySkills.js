@@ -5,3 +5,5 @@
  * @help
  * Contains custom effects for enemies.
  */
+
+// TODO: fix the fucking devouring skill

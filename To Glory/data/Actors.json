@@ -1,7 +1,7 @@
 [
 null,
-{"id":1,"battlerName":"HunterBattler","characterIndex":0,"characterName":"HunterWalk","classId":1,"equips":[1,1,2,3,0],"faceIndex":0,"faceName":"HunterFace","traits":[],"initialLevel":1,"maxLevel":1,"name":"Ivan","nickname":"The Hunter","note":"","profile":""},
-{"id":2,"battlerName":"GolemBattler","characterIndex":0,"characterName":"GolemWalk","classId":2,"equips":[2,1,2,3,0],"faceIndex":0,"faceName":"GolemFace","traits":[],"initialLevel":1,"maxLevel":1,"name":"Mimmo","nickname":"The Golem","note":"","profile":""},
-{"id":3,"battlerName":"NinjaBattler","characterIndex":0,"characterName":"NinjaWalk","classId":3,"equips":[3,0,2,3,4],"faceIndex":0,"faceName":"NinjaFace","traits":[],"initialLevel":1,"maxLevel":1,"name":"Takashi","nickname":"The Ninja","note":"","profile":""},
-{"id":4,"battlerName":"SorcererBattler","characterIndex":0,"characterName":"SorcererWalk","classId":4,"equips":[4,0,2,3,4],"faceIndex":0,"faceName":"SorcererFace","traits":[],"initialLevel":1,"maxLevel":1,"name":"Alissa","nickname":"The Sorcerer","note":"","profile":""}
+{"id":1,"battlerName":"HunterBattler","characterIndex":0,"characterName":"HunterWalk","classId":1,"equips":[1,1,2,0,0],"faceIndex":0,"faceName":"HunterFace","traits":[],"initialLevel":1,"maxLevel":1,"name":"Ivan","nickname":"The Hunter","note":"","profile":""},
+{"id":2,"battlerName":"GolemBattler","characterIndex":0,"characterName":"GolemWalk","classId":2,"equips":[2,1,2,0,0],"faceIndex":0,"faceName":"GolemFace","traits":[],"initialLevel":1,"maxLevel":1,"name":"Mimmo","nickname":"The Golem","note":"","profile":""},
+{"id":3,"battlerName":"NinjaBattler","characterIndex":0,"characterName":"NinjaWalk","classId":3,"equips":[3,0,2,0,4],"faceIndex":0,"faceName":"NinjaFace","traits":[],"initialLevel":1,"maxLevel":1,"name":"Takashi","nickname":"The Ninja","note":"","profile":""},
+{"id":4,"battlerName":"SorcererBattler","characterIndex":0,"characterName":"SorcererWalk","classId":4,"equips":[4,0,2,0,4],"faceIndex":0,"faceName":"SorcererFace","traits":[],"initialLevel":1,"maxLevel":1,"name":"Alissa","nickname":"The Sorcerer","note":"","profile":""}
 ]

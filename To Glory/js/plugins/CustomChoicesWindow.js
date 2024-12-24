@@ -44,7 +44,10 @@
             this._choicesWindowActive = false
             this._customChoicesWindow.close()
             this._customDescriptionWindow.close()
+            this._customChoicesWindow.deactivate()
+            this._customDescriptionWindow.deactivate()
             this.restoreClassicWindows()
+            this.removeCustomChoiceWindows()
         }
 
         this._customChoicesWindow.setHandler(onSelect)
@@ -67,7 +70,9 @@
     }
     
     Scene_Battle.prototype.updateCustomDescription = function(description) {
-        this._customDescriptionWindow.setText(description)
+        if (this._choicesWindowActive) {
+            this._customDescriptionWindow.setText(description)
+        }
     }
     
     Scene_Battle.prototype.removeCustomChoiceWindows = function() {
@@ -99,6 +104,9 @@
 
     Scene_Battle.prototype.restoreClassicWindows = function() {
         this._statusWindow.show()
+        this.removeChild(this._customChoicesWindow)
+        this.removeChild(this._customDescriptionWindow)
+        this._choicesWindowActive = false
     }
 
     /**********************************************************/
@@ -208,7 +216,7 @@
     Window_Description.prototype.refresh = function() {
         this.contents.clear()
         // Setting up text wrapping
-        console.log("Content width: " + this.contentsWidth() + "; width of a = " + this.textWidth("a"))
+        // console.log("Content width: " + this.contentsWidth() + "; width of a = " + this.textWidth("a"))
         this._text = lineWrap(this._text, this.contentsWidth(), this.textWidth("a"))
         this.drawTextEx(this._text, 0, 0)
     }
