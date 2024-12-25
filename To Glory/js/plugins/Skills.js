@@ -17,7 +17,8 @@ function inflictBleeding(entitiesArray) {
             const numberOfNegativeStatesOfEntity = filterAllNegativeStates(entity.states(), entity.name()).length
             // Bleeding inflicts more damage if there are other negative states on the entity.
             const damage = Math.floor(entity.mhp * 0.05 + (entity.mhp * 0.05 * numberOfNegativeStatesOfEntity))
-            console.log(`Inflicting ${damage} damage to entity ${entity.name()}`)
+            console.log(`Inflicting ${damage} damage to entity ${entity.name()}; 
+            negative states = ${JSON.stringify(filterAllNegativeStates(entity.states(), entity.name()))}`)
             entity.gainHp(-damage)
             entity.startDamagePopup() // shows the damage number
             // entity.startAnimation(ANIMATION_ID) // to show bleeding animation
@@ -66,12 +67,18 @@ function inflictBleeding(entitiesArray) {
     // adding damage forwarding for grappling effect
     const _Game_Battler_gainHP = Game_Battler.prototype.gainHp
     Game_Battler.prototype.gainHp = function (value) {
-        _Game_Battler_gainHP.call(this, value)
         if (value < 0) {
+            _Game_Battler_gainHP.call(this, value)
             // damage was taken, so proceed with forwarding
             forwardDamageIfGrappled(this, value)
             // when entities with avalanche effect take damage, activate it
             avalancheEffect(this, value)
+        } else {
+            if (this.isStateAffected(BURNING_STATE_ID)) {
+                console.log(`${this.name()} is burning and can't be healed!`)
+            } else {
+                _Game_Battler_gainHP.call(this, value)
+            }
         }
     }
 

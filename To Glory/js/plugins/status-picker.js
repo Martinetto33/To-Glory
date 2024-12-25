@@ -7,10 +7,12 @@
 var negativeStatusesJSON = {
     "poisoned": 3, 
     "bleeding": 6, 
-    "restricted": 7, 
+    "restricted": 7,
+    "burning": 23,
+    "hunter_mark": 22
 }
 
-var negativeStatuses = [3, 6, 7]
+var negativeStatuses = [3, 6, 7, 23, 22]
     
 
 /**

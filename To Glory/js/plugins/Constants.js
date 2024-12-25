@@ -22,6 +22,12 @@ const C_EVASION_LV1 = 10 // counter-attack evasion lv1
 const C_EVASION_LV2 = 17
 const C_EVASION_LV3 = 18
 const CUSTOM_SKILL_SEALED = 21
+const BURNING_STATE_ID = 23
+const POISON_STATE_ID = 3
+const BLEEDING_STATE_ID = 6
+const RESTRICTED_STATE_ID = 7
+const HUNTER_MARK_STATE_ID = 22
+
 
 // Skills
 const CATCH_SKILL_ID = 10
