@@ -42,3 +42,6 @@ const POPUP_STANDARD_DURATION = 120 // number of FPS the avalanche and grapple p
 
 // Common events
 const IVAN_ON_EVASION_SUCCEEDED = 8
+
+// Items
+const BEZOAR_ID = 4
