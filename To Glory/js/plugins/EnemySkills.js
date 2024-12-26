@@ -6,28 +6,19 @@
  * Contains custom effects for enemies.
  */
 
-// TODO: fix the fucking devouring skill
 function activateWerewolvesDevouring() {
     let werewolves = $gameTroop.members().filter(e => e.enemyId() === WEREWOLF_ID)
     // In javascript, for...in iterates over the keys, for...of iterates over values
     // https://stackoverflow.com/questions/29285897/difference-between-for-in-and-for-of-statements
     for (const enemy of werewolves) {
         if (enemy && enemy.canMove() && enemy.canUseDevouring() && !enemy._actionsTaken) {
-            // Temporarily add the skill to the enemy's skill list
             let markedTargets = $gameParty.members()
                     .filter(actor => actor.isStateAffected(HUNTER_MARK_STATE_ID))
             let target = pick(markedTargets)
             if (target !== null) {
-                // enemy._usedDevouring = true
-                // let action = new Game_Action(enemy)
-                // action.setSkill(DEVOURING_SKILL_ID)
-                // action.setTarget($gameParty.members().indexOf(target))
-                // enemy.clearActions()
-                // enemy.setAction(0, action)
                 console.log("TARGET INDEX: " + target.index())
+                // this is enough to trigger the forced action at the end of the turn
                 enemy.forceAction(DEVOURING_SKILL_ID, target.index())
-                BattleManager.forceAction(enemy)
-                enemy._actionsTaken = true
                 console.log(`${enemy.name()} used Devouring on ${target.name()}!`)
             }
         }
@@ -41,7 +32,7 @@ function activateWerewolvesDevouring() {
         _BattleManager_startTurn.call(this)
         if ($gameSwitches.value(HUNTER_MARK_ACTIVATED_SWITCH_ID)) {
             activateWerewolvesDevouring()
-            console.log("I activated Werewolves Devouring!")
+            console.log("[DEVOURING]: BattleManager activated Werewolves Devouring!")
         }
     }
 
@@ -69,11 +60,21 @@ function activateWerewolvesDevouring() {
 
     const _Game_Action_apply = Game_Action.prototype.apply
     Game_Action.prototype.apply = function (target) {
-        _Game_Action_apply.call(this, target)
         if (this.item().id === DEVOURING_SKILL_ID) {
-            // Remove Hunter's Mark from target.
-            target.removeState(HUNTER_MARK_STATE_ID)
-            console.log(`Hunter's mark removed from ${target.name()}`)
+            if (this.subject().isEnemy() && this.subject().canUseDevouring()) {
+                _Game_Action_apply.call(this, target)
+                const damage = target.result().hpDamage
+                if (damage !== 0) {
+                    console.log("[DEVOURING]: Damage inflicted by Devouring: " + damage)
+                }
+                // Remove Hunter's Mark from target.
+                target.removeState(HUNTER_MARK_STATE_ID)
+                // console.log(`[DEVOURING]: Hunter's mark removed from ${target.name()}`)
+            } else {
+                $gameTemp.reserveCommonEvent(HUNTER_MARK_HEALED)
+            }
+        } else {
+            _Game_Action_apply.call(this, target)
         }
         this.subject()._actionsTaken = true
     }

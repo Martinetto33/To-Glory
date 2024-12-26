@@ -48,30 +48,37 @@ var negativeStatuses = [3, 6, 7, 23, 22]; // if I remove this semicolon everythi
 function healRandomStatus(target) {
     const partyMember = BattleManager._subject
     if (partyMember && partyMember.isActor()) {
-        console.log(`Actor using the item: ${partyMember.name()}; target = ${target.name()}`)
+        // console.log(`Actor using the item: ${partyMember.name()}; target = ${target.name()}`)
     }
-    let allPartyMemberStates = target._states
+    let allPartyMemberStates = target.states()
         .filter(state => state) // checks if state is not null
-    console.log("All states found for " + target.name() + ": " + allPartyMemberStates)
+    // console.log("All states found for " + target.name() + ": " + JSON.stringify(allPartyMemberStates))
     // This array will only contain the negative states.
     let partyMemberStates = filterAllNegativeStates(allPartyMemberStates, target.name())
     // Selecting a random status
     if (partyMemberStates.length > 0) {
         let index = Math.floor(Math.random() * partyMemberStates.length)
-        let id = partyMemberStates[index]
-        partyMember.removeState(id)
-        console.log(`Removed state ${id} from ${target.name()}!`)
+        let stateToRemove = partyMemberStates[index]
+        target.removeState(stateToRemove.id)
+        console.log(`[BEZOAR]: Removed state ${stateToRemove.name} from ${target.name()}!`)
     } else {
-        console.log(`No negative states found for actor ${target.name()}`)
+        console.log(`[BEZOAR]: No negative states found for actor ${target.name()}`)
     }
 }
 
+/**
+ * Filters all negative states listed in the {@link negativeStatuses}
+ * array.
+ * @param {Array<State>} array it MUST be an array of objects, not the list of state ids!
+ * @param {String} entityName the name to print in the console.
+ * @returns an array containing the filtered states.
+ */
 function filterAllNegativeStates(array, entityName) {
     //console.log("In filter: array = " + JSON.stringify(array))
     let partyMemberNegativeStates = [];
     for (i = 0; i < array.length; i++) {
         if (isNegativeState(array[i].id)) {
-            console.log(`Actor ${entityName} is affected by negative status ${array[i].name}!`)
+            // console.log(`Actor ${entityName} is affected by negative status ${array[i].name}!`)
             partyMemberNegativeStates.push(array[i])
         }
     }
