@@ -15,6 +15,9 @@ const MIMMO_INDEX = 1 // index is the position inside the array, not the id
 const MIMMO_ID = 2
 const IVAN_ID = 1
 
+// Enemy ids
+const WEREWOLF_ID = 5
+
 // States
 const MIMMO_AVALANCHE_STATE_ID = 9
 const RESTRICTING_STATE_ID = 8
@@ -33,9 +36,13 @@ const HUNTER_MARK_STATE_ID = 22
 const CATCH_SKILL_ID = 10
 const EVASION_SKILL_ID = 24
 const NEGATE_SKILL_ID = 23
+const DEVOURING_SKILL_ID = 7
 
 // Switches
-const GRAPPLE_FAILED_SWITCH_INDEX = 6
+// check with $gameSwitches.value(SWITCH_ID) => returns 
+// true if the switch is on or false otherwise; you can also use
+// setValue(switchId, value)
+const HUNTER_MARK_ACTIVATED_SWITCH_ID = 6
 
 // View constants
 const POPUP_STANDARD_DURATION = 120 // number of FPS the avalanche and grapple popups are shown for

@@ -67,15 +67,15 @@ function healRandomStatus(target) {
 }
 
 function filterAllNegativeStates(array, entityName) {
-    console.log("In filter: array = " + JSON.stringify(array))
+    //console.log("In filter: array = " + JSON.stringify(array))
     let partyMemberNegativeStates = [];
     for (i = 0; i < array.length; i++) {
-        if (isNegativeState(array[i])) {
-            console.log(`Actor ${entityName} is affected by negative status ${array[i]}!`)
+        if (isNegativeState(array[i].id)) {
+            console.log(`Actor ${entityName} is affected by negative status ${array[i].name}!`)
             partyMemberNegativeStates.push(array[i])
         }
     }
-    console.log("Filtered array = " + JSON.stringify(partyMemberNegativeStates))
+    //console.log("Filtered array = " + JSON.stringify(partyMemberNegativeStates))
     return partyMemberNegativeStates
 }
 

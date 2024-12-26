@@ -64,3 +64,17 @@ function lineWrap(longText, maxWidth, characterWidth = 14) {
 function isSpace(character) {
     return character === " " || character === "\n"
 }
+
+/**
+ * Picks and returns a random element in the array
+ * @param {Array<Any>} array 
+ */
+function pick(array) {
+    if (!Array.isArray(array)) {
+        return null
+    }
+    if (array.length !== 0) {
+        return array[Math.floor(Math.random() * array.length)]
+    }
+    return null
+}
