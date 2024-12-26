@@ -84,7 +84,9 @@ function inflictBleeding(entitiesArray) {
 
     const _Game_Action_apply = Game_Action.prototype.apply
     Game_Action.prototype.apply = function (target) {
+        console.log(`[DEBUG]: Target ${target.name()} evasion before = ${target.eva}`)
         _Game_Action_apply.call(this, target)
+        console.log(`[DEBUG]: Target ${target.name()} evasion after = ${target.eva}`)
 
         if (this.item().id === CATCH_SKILL_ID) {
             const result = target.result()
@@ -95,7 +97,7 @@ function inflictBleeding(entitiesArray) {
             }
         }
         // If this is Alissa's Negate spell
-        if (this.item().id === NEGATE_SKILL_ID) {
+        if (this.item().id === NEGATE_SKILL_ID && target.result().isHit()) {
             negateEffectInProgress = true
             const skillIds = getSkillIdsListFromTarget(target)
             // the index() method returns the target's index in the array of current enemies
