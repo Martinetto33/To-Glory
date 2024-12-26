@@ -61,6 +61,10 @@ function activateWerewolvesDevouring() {
     const _Game_Action_apply = Game_Action.prototype.apply
     Game_Action.prototype.apply = function (target) {
         if (this.item().id === DEVOURING_SKILL_ID) {
+            /* This additional check ensures actors are still affected by hunter's
+            mark before any wolf can use the devouring action. If no hunter's mark
+            is found, the werewolves simply lose their turn, but they complain a bit
+            with the player first. */
             if (this.subject().isEnemy() && this.subject().canUseDevouring()) {
                 _Game_Action_apply.call(this, target)
                 const damage = target.result().hpDamage
@@ -71,6 +75,7 @@ function activateWerewolvesDevouring() {
                 target.removeState(HUNTER_MARK_STATE_ID)
                 // console.log(`[DEVOURING]: Hunter's mark removed from ${target.name()}`)
             } else {
+                // An event that shows some text with the Werewolves' complaints :)
                 $gameTemp.reserveCommonEvent(HUNTER_MARK_HEALED)
             }
         } else {
