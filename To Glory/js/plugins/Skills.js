@@ -84,9 +84,7 @@ function inflictBleeding(entitiesArray) {
 
     const _Game_Action_apply = Game_Action.prototype.apply
     Game_Action.prototype.apply = function (target) {
-        console.log(`[DEBUG]: Target ${target.name()} evasion before = ${target.eva}`)
         _Game_Action_apply.call(this, target)
-        console.log(`[DEBUG]: Target ${target.name()} evasion after = ${target.eva}`)
 
         if (this.item().id === CATCH_SKILL_ID) {
             const result = target.result()
