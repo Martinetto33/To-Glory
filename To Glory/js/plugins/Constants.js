@@ -55,3 +55,6 @@ const HUNTER_MARK_HEALED = 10
 
 // Items
 const BEZOAR_ID = 4
+
+// Configuration constants
+const MP_GAINED_PER_ATTACK = 5

@@ -85,7 +85,9 @@ function inflictBleeding(entitiesArray) {
     const _Game_Action_apply = Game_Action.prototype.apply
     Game_Action.prototype.apply = function (target) {
         _Game_Action_apply.call(this, target)
-
+        if (this.item().id === BASIC_ATTACK_SKILL_ID) {
+            this.subject().gainMp(MP_GAINED_PER_ATTACK)
+        }
         if (this.item().id === CATCH_SKILL_ID) {
             const result = target.result()
             if (result.isHit()) {
