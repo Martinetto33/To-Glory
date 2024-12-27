@@ -211,7 +211,9 @@ function avalancheEffect(target, damage) {
         target.hasMyAvalancheTakenEffect = true // this is called before gainHp() to avoid recursive loops (gainHp calls avalancheEffect which calls gainHp and so on)
         $gameTroop.members().forEach(enemy => {
             enemy.gainHp(-Math.abs(damage)) // this leads to a recursive call of gainHP... watch out
-            // enemy.startDamagePopup()
+            if (enemy.isDead()) {
+                enemy.performCollapse()
+            }
             showCustomPopup(enemy, `Avalanche: ${Math.abs(damage)} DMG`, "#8cfdff", POPUP_STANDARD_DURATION)
             console.log(`Enemy took ${-damage} from avalanche`)
         })
