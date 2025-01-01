@@ -196,7 +196,7 @@ function forwardDamageIfGrappled(target, damage) {
     //console.log(`This target is ${target.name()} and hasAlreadyForwardedDamage = ${target.hasAlreadyForwardedDamage}`)
     if (target.isStateAffected(negativeStatusesJSON["restricted"]) && !target.hasAlreadyForwardedDamage) {
         /* Mimmo is grappling the enemy, so he should take damage. */
-        const mimmo = $gameParty.members()[MIMMO_INDEX]
+        const mimmo = $gameParty.members().find(actor => actor.actorId() === MIMMO_ID)
         mimmo.gainHp(-(Math.abs(damage)))
         // mimmo.startDamagePopup()
         showCustomPopup(mimmo, `Catch: ${Math.abs(damage)} DMG`, "#939e9e", POPUP_STANDARD_DURATION)

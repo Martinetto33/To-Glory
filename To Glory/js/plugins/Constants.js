@@ -9,7 +9,8 @@
  */
 
 // Indices
-const MIMMO_INDEX = 1 // index is the position inside the array, not the id
+// const MIMMO_INDEX = 1 // index is the position inside the array, not the id
+// UPDATE: do not use indices, they can vary if the player changes formation
 
 // Actor ids
 const MIMMO_ID = 2
