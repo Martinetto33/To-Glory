@@ -246,6 +246,9 @@ function counterAttackDodgeEffect(target, subject) {
         subject.gainHp(-dmg)
         //subject.startDamagePopup()
         showCustomPopup(subject, `Counter-attack! ${dmg} DMG`, "#e6842e", 180)
+        if (subject.isDead()) {
+            subject.performCollapse()
+        }
         console.log("Counter attack evasion succeeded! Inflicted " + dmg.toString() + " dmg!")
         // Now calling the common event that resets all the stuff
         $gameTemp.reserveCommonEvent(IVAN_ON_EVASION_SUCCEEDED)
