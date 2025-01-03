@@ -28,8 +28,8 @@ const colorSchemes = [
 ];
 const FULL_HEALTH_BAR_WIDTH = 150;
 const HEALTH_BAR_HEIGHT = 10;
-const MAX_HEALTH_LOWER_BOUND = 0.5
-const MEDIUM_HEALTH_LOWER_BOUND = 0.25
+const MAX_HEALTH_LOWER_BOUND = 0.5;
+const MEDIUM_HEALTH_LOWER_BOUND = 0.25;
 
 // Scene_Battle.start is called after the battle scene was loaded.
 // To display custom health bars, modify this method.
@@ -53,14 +53,16 @@ const MEDIUM_HEALTH_LOWER_BOUND = 0.25
     Game_Battler.prototype.gainHp = function(value) {
         _Game_Battler_gainHp.call(this, value)
         if (this.isEnemy()) {
-            const enemyHealthBar = healthBarsMap.find(pair => pair.enemy === this)
+            const enemyToHealthBarEntry = healthBarsMap.find(pair => pair.enemy === this)
+            const enemyHealthBar = enemyToHealthBarEntry.sprite
             if (this.isDead()) {
                 // if the enemy died, remove the health bar
-                const index = healthBarsMap.indexOf(enemyHealthBar)
+                const index = healthBarsMap.indexOf(enemyToHealthBarEntry)
                 if (index === -1) {
-                    throw new Error("Could not find element in enemyHealthBars.")
+                    throw new Error("Could not find entry in healthBarsMap.")
                 }
                 const removedElements = healthBarsMap.splice(index, 1)
+                // console.log("[HEALTH-BAR] Removed elements: " + JSON.stringify(removedElements))
                 removeHealthBar(removedElements[0].sprite)
             } else {
                 updateHealthBar(this, enemyHealthBar)
@@ -112,6 +114,7 @@ function showCustomHealthBar(enemy) {
 
 function updateHealthBar(enemy, healthBarSprite) {
     const healthBarLength = calculateHealthBarLength(enemy)
+    console.log("[HEALTH-BAR] Health bar length: " + healthBarLength)
     const colorSchemeIndex = getColorSchemeFromHealthBarLength(healthBarLength)
     const bitmap = new Bitmap(healthBarLength, HEALTH_BAR_HEIGHT)
     bitmap.gradientFillRect(
@@ -122,6 +125,7 @@ function updateHealthBar(enemy, healthBarSprite) {
         colorSchemes[colorSchemeIndex].color1,
         colorSchemes[colorSchemeIndex].color2
     )
+    healthBarSprite.bitmap.clear()
     healthBarSprite.bitmap = bitmap
 }
 
