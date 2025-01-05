@@ -34,18 +34,37 @@ const MEDIUM_HEALTH_LOWER_BOUND = 0.25;
 // Scene_Battle.start is called after the battle scene was loaded.
 // To display custom health bars, modify this method.
 (() => {
-    let healthBarsMap = []
+    // Creating a custom class for health bars
+    Sprite_HealthBar.prototype = Object.create(Sprite.prototype)
+    Sprite_HealthBar.prototype.constructor = Sprite_HealthBar
+
+    Sprite_HealthBar.prototype.initialize = function(enemy) {
+        Sprite.prototype.initialize.call(this)
+        this._enemy = enemy
+        this._healthBar = showCustomHealthBar(enemy)
+    }
+
+    Sprite_HealthBar.prototype.updateHealthBar = function() {
+        updateHealthBar(this._enemy, this._healthBar)
+    }
+
+    Sprite_HealthBar.prototype.enemy = function() {
+        return this._enemy
+    }
+
+    Sprite_HealthBar.prototype.removeHealthBar = function() {
+        SceneManager._scene.removeChild(this._healthBar)
+    }
+
+    let healthBarSpritesList = []
 
     const _Scene_Battle_start = Scene_Battle.prototype.start
     Scene_Battle.prototype.start = function() {
         _Scene_Battle_start.call(this)
         $gameTroop.members()
                 .forEach(enemy => {
-                    const healthBarSprite = showCustomHealthBar(enemy)
-                    healthBarsMap.push({
-                        "enemy": enemy,
-                        "sprite": healthBarSprite
-                    })
+                    const sprite = new Sprite_HealthBar(enemy)
+                    healthBarSpritesList.push(sprite)
                 })
     }
 
@@ -53,19 +72,18 @@ const MEDIUM_HEALTH_LOWER_BOUND = 0.25;
     Game_Battler.prototype.gainHp = function(value) {
         _Game_Battler_gainHp.call(this, value)
         if (this.isEnemy()) {
-            const enemyToHealthBarEntry = healthBarsMap.find(pair => pair.enemy === this)
-            const enemyHealthBar = enemyToHealthBarEntry.sprite
+            const healthBarSprite = healthBarSpritesList.find(sprite => sprite.enemy() === this)
             if (this.isDead()) {
                 // if the enemy died, remove the health bar
-                const index = healthBarsMap.indexOf(enemyToHealthBarEntry)
+                const index = healthBarSpritesList.indexOf(healthBarSprite)
                 if (index === -1) {
-                    throw new Error("Could not find entry in healthBarsMap.")
+                    throw new Error("Could not find entry in healthBarSpritesList.")
                 }
-                const removedElements = healthBarsMap.splice(index, 1)
+                healthBarSpritesList.splice(index, 1)
                 // console.log("[HEALTH-BAR] Removed elements: " + JSON.stringify(removedElements))
-                removeHealthBar(removedElements[0].sprite)
+                healthBarSprite.removeHealthBar()
             } else {
-                updateHealthBar(this, enemyHealthBar)
+                healthBarSprite.updateHealthBar()
             }
         }
     }
@@ -172,4 +190,8 @@ function calculateHealthBarLength(enemy) {
 
 function removeHealthBar(healthBarSprite) {
     SceneManager._scene.removeChild(healthBarSprite)
+}
+
+function Sprite_HealthBar() {
+    this.initialize.apply(this, arguments)
 }
