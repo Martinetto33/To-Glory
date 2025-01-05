@@ -30,10 +30,31 @@ const FULL_HEALTH_BAR_WIDTH = 150;
 const HEALTH_BAR_HEIGHT = 10;
 const MAX_HEALTH_LOWER_BOUND = 0.5;
 const MEDIUM_HEALTH_LOWER_BOUND = 0.25;
+const HEALTH_BAR_NAME = "healthBar";
+const HEALTH_BAR_FRAME_NAME = "frame";
 
 // Scene_Battle.start is called after the battle scene was loaded.
 // To display custom health bars, modify this method.
 (() => {
+    Spriteset_Battle.prototype.addHealthBar = function(healthBarContainer) {
+        /* So this is some ugly code that tries to insert the health bars
+        after the tiling sprites, which are sprites used to render repeated
+        patterns, and before the enemy sprites, so that enemy images cover
+        the health bars. This is stupid, but I'll leave it heare for future
+        reference. */
+        /* const children = this._battleField.children
+        let enemySpriteIndex = children.findIndex(child => child instanceof Sprite_Enemy)
+        if (enemySpriteIndex === -1) {
+            enemySpriteIndex = children.length
+        }
+        this._battleField.addChildAt(healthBarContainer, enemySpriteIndex) */
+        this._battleField.addChild(healthBarContainer)
+    }
+
+    Spriteset_Battle.prototype.removeHealthBar = function(healthBarContainer) {
+        this._battleField.removeChild(healthBarContainer)
+    }
+
     // Creating a custom class for health bars
     Sprite_HealthBar.prototype = Object.create(Sprite.prototype)
     Sprite_HealthBar.prototype.constructor = Sprite_HealthBar
@@ -41,11 +62,24 @@ const MEDIUM_HEALTH_LOWER_BOUND = 0.25;
     Sprite_HealthBar.prototype.initialize = function(enemy) {
         Sprite.prototype.initialize.call(this)
         this._enemy = enemy
-        this._healthBar = showCustomHealthBar(enemy)
+        const enemySprite = SceneManager._scene._spriteset.findBattlerSprite(enemy)
+        // Saving enemy sprite coordinates to better calculate necessary offsets
+        // for frame and health bar sprites.
+        this._enemyX = enemySprite.x
+        this._enemyY = enemySprite.y
+        this._containerOriginX = this._enemyX - FULL_HEALTH_BAR_WIDTH / 2 // center the health bar
+        this._containerOriginY = this._enemyY - enemySprite.height - 20 // put the bar under the enemy sprite
+        this._healthBarContainer = new Sprite()
+        this._healthBarContainer.addChild(showHealthBarFrame(0, 0))
+        this._healthBarContainer.addChild(showCustomHealthBar(20, 16))
+        this._healthBarContainer.x = this._containerOriginX
+        this._healthBarContainer.y = this._containerOriginY
+        // SceneManager._scene.addChildAt(this._healthBarContainer, 0)
+        SceneManager._scene._spriteset.addHealthBar(this._healthBarContainer)
     }
 
     Sprite_HealthBar.prototype.updateHealthBar = function() {
-        updateHealthBar(this._enemy, this._healthBar)
+        updateHealthBar(this._enemy, this._healthBarContainer.children.find(child => child.name === HEALTH_BAR_NAME))
     }
 
     Sprite_HealthBar.prototype.enemy = function() {
@@ -53,7 +87,7 @@ const MEDIUM_HEALTH_LOWER_BOUND = 0.25;
     }
 
     Sprite_HealthBar.prototype.removeHealthBar = function() {
-        SceneManager._scene.removeChild(this._healthBar)
+        SceneManager._scene._spriteset.removeHealthBar(this._healthBarContainer)
     }
 
     let healthBarSpritesList = []
@@ -66,7 +100,6 @@ const MEDIUM_HEALTH_LOWER_BOUND = 0.25;
                     const sprite = new Sprite_HealthBar(enemy)
                     healthBarSpritesList.push(sprite)
                 })
-        showHealthBarFrame()
     }
 
     _Game_Battler_gainHp = Game_Battler.prototype.gainHp
@@ -95,8 +128,7 @@ const MEDIUM_HEALTH_LOWER_BOUND = 0.25;
  * @param {Game_Battler} enemy the enemy 
  * @returns the healthBar sprite
  */
-function showCustomHealthBar(enemy) {
-    const enemySprite = SceneManager._scene._spriteset.findBattlerSprite(enemy)
+function showCustomHealthBar(x, y) {
     // Create a new sprite for the popup
     const healthBar = new Sprite()
     const bitmap = new Bitmap(FULL_HEALTH_BAR_WIDTH, HEALTH_BAR_HEIGHT) // Width and height of the popup
@@ -123,11 +155,9 @@ function showCustomHealthBar(enemy) {
     )
     healthBar.bitmap = bitmap
     healthBar.opacity = 255
-    healthBar.x = enemySprite.x - FULL_HEALTH_BAR_WIDTH / 2 // center the health bar
-    healthBar.y = enemySprite.y - enemySprite.height - 20
-
-    // Add the popup to the battle scene
-    SceneManager._scene.addChild(healthBar)
+    healthBar.x = x 
+    healthBar.y = y
+    healthBar.name = HEALTH_BAR_NAME
     return healthBar
 }
 
@@ -197,15 +227,15 @@ function Sprite_HealthBar() {
     this.initialize.apply(this, arguments)
 }
 
-function showHealthBarFrame() {
+function showHealthBarFrame(x, y) {
     const frame = new Sprite()
     const bitmap = ImageManager.loadBitmap('img/pictures/', "health-bar", 0, false)
     frame.bitmap = bitmap
     frame.opacity = 255
-    frame.x = 0
-    frame.y = 0
+    frame.x = x
+    frame.y = y
     frame.scale.x = 0.25
-    frame.scale.y = 0.25
-    SceneManager._scene.addChild(frame)
+    frame.scale.y = 0.15
+    frame.name = HEALTH_BAR_FRAME_NAME
     return frame
 }
