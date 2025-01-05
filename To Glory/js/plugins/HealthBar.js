@@ -66,6 +66,7 @@ const MEDIUM_HEALTH_LOWER_BOUND = 0.25;
                     const sprite = new Sprite_HealthBar(enemy)
                     healthBarSpritesList.push(sprite)
                 })
+        showHealthBarFrame()
     }
 
     _Game_Battler_gainHp = Game_Battler.prototype.gainHp
@@ -79,7 +80,7 @@ const MEDIUM_HEALTH_LOWER_BOUND = 0.25;
                 if (index === -1) {
                     throw new Error("Could not find entry in healthBarSpritesList.")
                 }
-                healthBarSpritesList.splice(index, 1)
+                healthBarSpritesList.splice(index, 1) // removing sprite from list
                 // console.log("[HEALTH-BAR] Removed elements: " + JSON.stringify(removedElements))
                 healthBarSprite.removeHealthBar()
             } else {
@@ -194,4 +195,17 @@ function removeHealthBar(healthBarSprite) {
 
 function Sprite_HealthBar() {
     this.initialize.apply(this, arguments)
+}
+
+function showHealthBarFrame() {
+    const frame = new Sprite()
+    const bitmap = ImageManager.loadBitmap('img/pictures/', "health-bar", 0, false)
+    frame.bitmap = bitmap
+    frame.opacity = 255
+    frame.x = 0
+    frame.y = 0
+    frame.scale.x = 0.25
+    frame.scale.y = 0.25
+    SceneManager._scene.addChild(frame)
+    return frame
 }
