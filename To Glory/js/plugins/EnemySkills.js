@@ -95,8 +95,10 @@ function activateWerewolvesDevouring() {
                 // Remove Hunter's Mark from target.
                 // target.removeState(HUNTER_MARK_STATE_ID)
                 // Increase werewolf defence
-                this.subject().addState(DEFENSE_INCREASED_STATE_ID)
-                BattleManager._devouredActors.push(target)
+                if (target.result().isHit()) {
+                    this.subject().addState(DEFENSE_INCREASED_STATE_ID)
+                    BattleManager._devouredActors.push(target)
+                }
                 // console.log(`[DEVOURING]: Hunter's mark removed from ${target.name()}`)
             } else {
                 // An event that shows some text with the Werewolves' complaints :)

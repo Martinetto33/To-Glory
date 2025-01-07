@@ -9,10 +9,11 @@ var negativeStatusesJSON = {
     "bleeding": 6, 
     "restricted": 7,
     "burning": 23,
-    "hunter_mark": 22
+    "hunter_mark": 22,
+    "defense_down": 28
 }
 
-var negativeStatuses = [3, 6, 7, 23, 22]; // if I remove this semicolon everything explodes, 
+var negativeStatuses = [3, 6, 7, 23, 22, 28]; // if I remove this semicolon everything explodes, 
 // and this array is interpreted as a function. WTF RPG Maker
 
 (() => {
