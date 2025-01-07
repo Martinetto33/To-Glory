@@ -102,12 +102,13 @@ const HEALTH_BAR_FRAME_NAME = "frame";
                 })
     }
 
+    Game_Battler.prototype._wasHealthBarRemoved = false
     _Game_Battler_gainHp = Game_Battler.prototype.gainHp
     Game_Battler.prototype.gainHp = function(value) {
         _Game_Battler_gainHp.call(this, value)
         if (this.isEnemy()) {
             const healthBarSprite = healthBarSpritesList.find(sprite => sprite.enemy() === this)
-            if (this.isDead()) {
+            if (this.isDead() && !this._wasHealthBarRemoved) {
                 // if the enemy died, remove the health bar
                 const index = healthBarSpritesList.indexOf(healthBarSprite)
                 if (index === -1) {
@@ -116,6 +117,7 @@ const HEALTH_BAR_FRAME_NAME = "frame";
                 healthBarSpritesList.splice(index, 1) // removing sprite from list
                 // console.log("[HEALTH-BAR] Removed elements: " + JSON.stringify(removedElements))
                 healthBarSprite.removeHealthBar()
+                this._wasHealthBarRemoved = true
             } else {
                 healthBarSprite.updateHealthBar()
             }
