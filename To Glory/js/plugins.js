@@ -11,5 +11,6 @@ var $plugins =
 {"name":"Constants","status":true,"description":"Set of constants used to avoid magic numbers in the code.","parameters":{}},
 {"name":"CustomChoicesWindow","status":true,"description":"A window that displays some choices, and has an area to display some text next to the choices.","parameters":{}},
 {"name":"EnemySkills","status":true,"description":"Plugin containing custom enemies effects.","parameters":{}},
-{"name":"HealthBar","status":true,"description":"Plugin to display enemies health bars.","parameters":{}}
+{"name":"HealthBar","status":true,"description":"Plugin to display enemies health bars.","parameters":{}},
+{"name":"CustomShop","status":true,"description":"A way to add item limits to the shop.","parameters":{}}
 ];
