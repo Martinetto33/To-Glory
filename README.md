@@ -1,8 +1,8 @@
 ﻿# To Glory
-RPG video game made in RPG Maker MV.
-Authors:
-Alin Bordeianu
-Alessandro Benfenati
+RPG video game made in RPG Maker MV.<br>
+Authors:<br>
+- Alin Bordeianu<br>
+- Alessandro Benfenati
 
 # Controls
 ## PC Versions
