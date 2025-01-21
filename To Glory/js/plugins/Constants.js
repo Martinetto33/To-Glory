@@ -46,6 +46,14 @@ const DEVOURING_SKILL_ID = 7
 // true if the switch is on or false otherwise; you can also use
 // setValue(switchId, value)
 const HUNTER_MARK_ACTIVATED_SWITCH_ID = 6
+const SMALL_HEALING_KIT_SWITCH_ID = 11
+const MEDIUM_HEALING_KIT_SWITCH_ID = 12
+const BIG_HEALING_KIT_SWITCH_ID = 13
+const BEZOAR_KIT_SWITCH_ID = 14
+const STRENGTH_POTION_KIT_SWITCH_ID = 15
+const RESISTANCE_POTION_KIT_SWITCH_ID = 16
+const INITIATIVE_POTION_KIT_SWITCH_ID = 17
+const MAGICAL_TOME_SWITCH_ID = 18
 
 // View constants
 const POPUP_STANDARD_DURATION = 120 // number of FPS the avalanche and grapple popups are shown for
@@ -55,7 +63,25 @@ const IVAN_ON_EVASION_SUCCEEDED = 8
 const HUNTER_MARK_HEALED = 10
 
 // Items
+const SMALL_HEALING_POTION_ID = 1
+const MEDIUM_HEALING_POTION_ID = 2
+const BIG_HEALING_POTION_ID = 3
 const BEZOAR_ID = 4
+const STRENGTH_POTION_ID = 5
+const RESISTANCE_POTION_ID = 6
+const INITIATIVE_POTION_ID = 7
+const MAGICAL_TOME_ID = 8
+// ----
+// KITS
+// ----
+const SMALL_HEALING_POTION_KIT_ID = 9
+const MEDIUM_HEALING_POTION_KIT_ID = 10
+const BIG_HEALING_POTION_KIT_ID = 11
+const BEZOAR_KIT_ID = 12
+const STRENGTH_POTION_KIT_ID = 13
+const RESISTANCE_POTION_KIT_ID = 14
+const INITIATIVE_POTION_KIT_ID = 15
+const MAGICAL_TOME_KIT_ID = 16
 
 // Configuration constants
 const MP_GAINED_PER_ATTACK = 5

@@ -108,18 +108,20 @@ const HEALTH_BAR_FRAME_NAME = "frame";
         _Game_Battler_gainHp.call(this, value)
         if (this.isEnemy()) {
             const healthBarSprite = healthBarSpritesList.find(sprite => sprite.enemy() === this)
-            if (this.isDead() && !this._wasHealthBarRemoved) {
-                // if the enemy died, remove the health bar
-                const index = healthBarSpritesList.indexOf(healthBarSprite)
-                if (index === -1) {
-                    throw new Error("Could not find entry in healthBarSpritesList.")
+            if (healthBarSprite) {
+                if (this.isDead() && !this._wasHealthBarRemoved) {
+                    // if the enemy died, remove the health bar
+                    const index = healthBarSpritesList.indexOf(healthBarSprite)
+                    if (index === -1) {
+                        throw new Error("Could not find entry in healthBarSpritesList.")
+                    }
+                    healthBarSpritesList.splice(index, 1) // removing sprite from list
+                    // console.log("[HEALTH-BAR] Removed elements: " + JSON.stringify(removedElements))
+                    healthBarSprite.removeHealthBar()
+                    this._wasHealthBarRemoved = true
+                } else {
+                    healthBarSprite.updateHealthBar()
                 }
-                healthBarSpritesList.splice(index, 1) // removing sprite from list
-                // console.log("[HEALTH-BAR] Removed elements: " + JSON.stringify(removedElements))
-                healthBarSprite.removeHealthBar()
-                this._wasHealthBarRemoved = true
-            } else {
-                healthBarSprite.updateHealthBar()
             }
         }
     }
