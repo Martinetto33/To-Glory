@@ -63,12 +63,22 @@ const HEALTH_BAR_FRAME_NAME = "frame";
         Sprite.prototype.initialize.call(this)
         this._enemy = enemy
         const enemySprite = SceneManager._scene._spriteset.findBattlerSprite(enemy)
+        
+        requestAnimationFrame(() => {
+            this._initializeHealthBar(enemySprite)
+            /* Properties like enemySprite.height are loaded asynchronously.
+            This function call ensures that they are loaded before using them. */
+        })
+    }
+
+    Sprite_HealthBar.prototype._initializeHealthBar = function(enemySprite) {
         // Saving enemy sprite coordinates to better calculate necessary offsets
         // for frame and health bar sprites.
         this._enemyX = enemySprite.x
         this._enemyY = enemySprite.y
         this._containerOriginX = this._enemyX - FULL_HEALTH_BAR_WIDTH / 2 // center the health bar
-        this._containerOriginY = this._enemyY - enemySprite.height - 20 // put the bar under the enemy sprite
+        this._containerOriginY = this._enemyY - 20 // put the bar under the enemy sprite
+        console.log(`[HEALTH BAR] Container origin x: ${this._containerOriginX}; container origin y: ${this._containerOriginY}; sprite height: ${enemySprite.height}`)
         this._healthBarContainer = new Sprite()
         this._healthBarContainer.addChild(showHealthBarFrame(0, 0))
         this._healthBarContainer.addChild(showCustomHealthBar(20, 16))
@@ -95,6 +105,7 @@ const HEALTH_BAR_FRAME_NAME = "frame";
     const _Scene_Battle_start = Scene_Battle.prototype.start
     Scene_Battle.prototype.start = function() {
         _Scene_Battle_start.call(this)
+        healthBarSpritesList.forEach(sprite => sprite.removeHealthBar())
         $gameTroop.members()
                 .forEach(enemy => {
                     const sprite = new Sprite_HealthBar(enemy)
