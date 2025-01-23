@@ -110,6 +110,13 @@ const merchantItemsLimits = [
         "switchId": MAGICAL_TOME_SWITCH_ID,
         "name": "Magical Tome",
         "limit": 3
+    },
+    {
+        "id": SPEED_POTION_ID,
+        "kitId": SPEED_POTION_KIT_ID,
+        "switchId": SPEED_POTION_KIT_SWITCH_ID,
+        "name": "Potion of Speed",
+        "limit": 2
     }
 ];
 
