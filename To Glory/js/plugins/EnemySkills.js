@@ -81,7 +81,7 @@ function activateWerewolvesDevouring() {
 
     const _Game_Action_apply = Game_Action.prototype.apply
     Game_Action.prototype.apply = function (target) {
-        if (this.item().id === DEVOURING_SKILL_ID) {
+        if (DataManager.isSkill(this.item()) && this.item().id === DEVOURING_SKILL_ID) {
             /* This additional check ensures actors are still affected by hunter's
             mark before any wolf can use the devouring action. If no hunter's mark
             is found, the werewolves simply lose their turn, but they complain a bit
