@@ -115,8 +115,8 @@ const HEALTH_BAR_FRAME_NAME = "frame";
 
     Game_Battler.prototype._wasHealthBarRemoved = false
     _Game_Battler_gainHp = Game_Battler.prototype.gainHp
-    Game_Battler.prototype.gainHp = function(value) {
-        _Game_Battler_gainHp.call(this, value)
+    Game_Battler.prototype.gainHp = function(value, shouldForwardDamage = true) {
+        _Game_Battler_gainHp.call(this, value, shouldForwardDamage)
         if (this.isEnemy()) {
             const healthBarSprite = healthBarSpritesList.find(sprite => sprite.enemy() === this)
             if (healthBarSprite) {

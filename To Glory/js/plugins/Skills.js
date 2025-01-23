@@ -17,9 +17,9 @@ function inflictBleeding(entitiesArray) {
             const numberOfNegativeStatesOfEntity = filterAllNegativeStates(entity.states(), entity.name()).length
             // Bleeding inflicts more damage if there are other negative states on the entity.
             const damage = Math.floor(entity.mhp * 0.05 + (entity.mhp * 0.05 * numberOfNegativeStatesOfEntity))
-            console.log(`Inflicting ${damage} damage to entity ${entity.name()}; 
-            negative states = ${JSON.stringify(filterAllNegativeStates(entity.states(), entity.name()))}`)
-            entity.gainHp(-damage)
+            //console.log(`Inflicting ${damage} damage to entity ${entity.name()}; 
+            //negative states = ${JSON.stringify(filterAllNegativeStates(entity.states(), entity.name()))}`)
+            entity.gainHp(-damage, false) // bleeding damage should not be forwarded
             entity.startDamagePopup() // shows the damage number
             // entity.startAnimation(ANIMATION_ID) // to show bleeding animation
 
@@ -66,11 +66,26 @@ function inflictBleeding(entitiesArray) {
 
     // adding damage forwarding for grappling effect
     const _Game_Battler_gainHP = Game_Battler.prototype.gainHp
-    Game_Battler.prototype.gainHp = function (value) {
+    /**
+     * IMPORTANT NOTE: every change of gainHp method of Game_Battler
+     * has to respect the new signature, which includes the
+     * shouldForwardDamage parameter. This means that other plugins that
+     * change the function, such as the HealthBar.js plugin,
+     * have to call gainHp with an appropriate number of parameters.
+     * If params are more than needed, exceeding params don't break
+     * execution.
+     * @param {Number} value the value to add to the entity's HP (can be negative) 
+     * @param {Boolean} shouldForwardDamage a boolean telling if damage should be forwarded
+     * in case the entity is grappled
+     */
+    Game_Battler.prototype.gainHp = function (value, shouldForwardDamage = true) {
         if (value < 0) {
-            _Game_Battler_gainHP.call(this, value)
-            // damage was taken, so proceed with forwarding
-            forwardDamageIfGrappled(this, value)
+            _Game_Battler_gainHP.call(this, value, shouldForwardDamage)
+            console.log("[GAIN HP] Should forward damage value: " + shouldForwardDamage)
+            if (shouldForwardDamage) {
+                // damage was taken, so proceed with forwarding
+                forwardDamageIfGrappled(this, value)
+            }
             // when entities with avalanche effect take damage, activate it
             avalancheEffect(this, value)
         } else {
