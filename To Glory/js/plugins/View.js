@@ -12,7 +12,7 @@
     Sprite_Actor.prototype.updatePosition = function() {
         const actor = this._actor
         const grappledEnemies = $gameTroop.aliveMembers()
-                .filter(enemy => enemy.isStateAffected(negativeStatusesJSON["restricted"]))
+                .filter(enemy => enemy.isStateAffected(RESTRICTED_STATE_ID))
         if (actor.actorId() == MIMMO_ID && grappledEnemies.length == 1) { // 2 is Mimmo's id
             //console.log("Grappled!")
             const targetEnemy = grappledEnemies[0]

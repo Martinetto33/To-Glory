@@ -209,7 +209,7 @@ function inflictBleeding(entitiesArray) {
 function forwardDamageIfGrappled(target, damage) {
     //console.log("in forward damage")
     //console.log(`This target is ${target.name()} and hasAlreadyForwardedDamage = ${target.hasAlreadyForwardedDamage}`)
-    if (target.isStateAffected(negativeStatusesJSON["restricted"]) && !target.hasAlreadyForwardedDamage) {
+    if (target.isStateAffected(RESTRICTED_STATE_ID) && !target.hasAlreadyForwardedDamage) {
         /* Mimmo is grappling the enemy, so he should take damage. */
         const mimmo = $gameParty.members().find(actor => actor.actorId() === MIMMO_ID)
         mimmo.gainHp(-Math.floor(Math.abs(damage) / 2)) // inflict half the damage to Mimmo

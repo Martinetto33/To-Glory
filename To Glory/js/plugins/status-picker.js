@@ -3,17 +3,15 @@
  * @plugindesc Plugin used to extract statuses from actors
  */
 
-// JSON object containing states ids
-var negativeStatusesJSON = {
-    "poisoned": 3, 
-    "bleeding": 6, 
-    "restricted": 7,
-    "burning": 23,
-    "hunter_mark": 22,
-    "defense_down": 28
-}
-
-var negativeStatuses = [3, 6, 7, 23, 22, 28]; // if I remove this semicolon everything explodes, 
+var negativeStatuses = [
+    POISONED_STATE_ID, 
+    BLEEDING_STATE_ID, 
+    RESTRICTED_STATE_ID, 
+    BURNING_STATE_ID, 
+    HUNTER_MARK_STATE_ID, 
+    DEFENSE_DOWN_STATE_ID, 
+    PARALYZED_STATE_ID
+]; // if I remove this semicolon everything explodes, 
 // and this array is interpreted as a function. WTF RPG Maker
 
 (() => {
