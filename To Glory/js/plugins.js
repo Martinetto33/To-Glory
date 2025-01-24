@@ -13,5 +13,6 @@ var $plugins =
 {"name":"EnemySkills","status":true,"description":"Plugin containing custom enemies effects.","parameters":{}},
 {"name":"HealthBar","status":true,"description":"Plugin to display enemies health bars.","parameters":{}},
 {"name":"CustomShop","status":true,"description":"A way to add item limits to the shop.","parameters":{}},
-{"name":"Bgs_MenusCancelCommand","status":true,"description":"Add a cancel command to menus of your choice","parameters":{"Cancel Command Name":"← Back","Include in Main Menu":"true","Include in Item":"true","Include in Skill":"true","Include in Equip":"true","Include in Status":"true","Include in Options":"true","Include in Save":"true","Include in Party":"true","Include in Shop":"true"}}
+{"name":"Bgs_MenusCancelCommand","status":true,"description":"Add a cancel command to menus of your choice","parameters":{"Cancel Command Name":"← Back","Include in Main Menu":"true","Include in Item":"true","Include in Skill":"true","Include in Equip":"true","Include in Status":"true","Include in Options":"true","Include in Save":"true","Include in Party":"true","Include in Shop":"true"}},
+{"name":"MobileMenuButton","status":true,"description":"A plugin to add a menu button in the mobile version of the project.","parameters":{}}
 ];
