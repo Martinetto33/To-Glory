@@ -1,9 +1,9 @@
 /*:
- * @plugindesc Plugin containing custom enemies effects.
+ * @plugindesc Plugin containing custom Werewolves effects.
  * @author Alin Bordeianu
  * @version 1.0
  * @help
- * Contains custom effects for enemies.
+ * Contains custom effects for Werewolves.
  */
 
 const werewolfSkillsKit = [
@@ -84,8 +84,7 @@ function activateWerewolvesDevouring() {
         if (DataManager.isSkill(this.item()) && this.item().id === DEVOURING_SKILL_ID) {
             /* This additional check ensures actors are still affected by hunter's
             mark before any wolf can use the devouring action. If no hunter's mark
-            is found, the werewolves simply lose their turn, but they complain a bit
-            with the player first. */
+            is found, the werewolves complain a bit with the player. */
             if (this.subject().isEnemy() && this.subject().canUseDevouring(target)) {
                 _Game_Action_apply.call(this, target)
                 const damage = target.result().hpDamage

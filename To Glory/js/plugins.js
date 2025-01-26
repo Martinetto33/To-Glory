@@ -8,10 +8,11 @@ var $plugins =
 {"name":"Skills","status":true,"description":"Plugin that implements some unconventional skills for actors.","parameters":{}},
 {"name":"View","status":true,"description":"Plugin for adding visual effects to fighting system.","parameters":{}},
 {"name":"CustomChoicesWindow","status":true,"description":"A window that displays some choices, and has an area to display some text next to the choices.","parameters":{}},
-{"name":"EnemySkills","status":true,"description":"Plugin containing custom enemies effects.","parameters":{}},
+{"name":"WerewolvesSkills","status":true,"description":"Plugin containing custom Werewolves effects.","parameters":{}},
 {"name":"HealthBar","status":true,"description":"Plugin to display enemies health bars.","parameters":{}},
 {"name":"CustomShop","status":true,"description":"A way to add item limits to the shop.","parameters":{}},
 {"name":"Bgs_MenusCancelCommand","status":true,"description":"Add a cancel command to menus of your choice","parameters":{"Cancel Command Name":"← Back","Include in Main Menu":"true","Include in Item":"true","Include in Skill":"true","Include in Equip":"true","Include in Status":"true","Include in Options":"true","Include in Save":"true","Include in Party":"true","Include in Shop":"true"}},
 {"name":"MobileMenuButton","status":true,"description":"A plugin to add a menu button in the mobile version of the project.","parameters":{}},
-{"name":"status-picker","status":true,"description":"Plugin used to extract statuses from actors","parameters":{}}
+{"name":"StatusPicker","status":true,"description":"Plugin used to extract statuses from actors","parameters":{}},
+{"name":"JellyfishSkills","status":true,"description":"Custom skills for Jellyfish.","parameters":{}}
 ];
